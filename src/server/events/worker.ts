@@ -1,4 +1,6 @@
+import crypto from 'crypto'
 import { createSupabaseServerClient } from '../db/supabaseServer'
+import { log } from '../utils/logger'
 
 function getNextRetryDate(attempts: number) {
   const seconds = Math.pow(2, attempts)
@@ -7,12 +9,22 @@ function getNextRetryDate(attempts: number) {
 
 export async function processEvents(limit = 10) {
   const supabase = createSupabaseServerClient()
+  const requestId = crypto.randomUUID()
+
+  log('info', 'PROCESS_EVENTS_START', {
+    requestId,
+    limit,
+  })
 
   const { data: events, error: lockError } = await supabase.rpc('lock_events', {
     limit_count: limit,
   })
 
   if (lockError) {
+    log('error', 'PROCESS_EVENTS_LOCK_FAIL', {
+      requestId,
+      error: lockError.message,
+    })
     throw lockError
   }
 
@@ -24,25 +36,24 @@ export async function processEvents(limit = 10) {
 
   for (const event of events || []) {
     try {
+      log('info', 'PROCESS_EVENT_ITEM_START', {
+        requestId,
+        eventId: event.id,
+        type: event.type,
+      })
+
       switch (event.type) {
         case 'sale_created':
-          console.log('PROCESSING_EVENT', {
-            type: event.type,
-            eventId: event.id,
-            payload: event.payload,
-          })
-
-          // teste de falha forçada opcional
           if ((event.payload as any)?.force_fail === true) {
             throw new Error('FORCED_EVENT_FAILURE')
           }
-
           break
 
         default:
-          console.log('UNKNOWN_EVENT_TYPE', {
-            type: event.type,
+          log('info', 'UNKNOWN_EVENT_TYPE', {
+            requestId,
             eventId: event.id,
+            type: event.type,
           })
       }
 
@@ -64,10 +75,24 @@ export async function processEvents(limit = 10) {
         type: event.type,
         status: 'processed',
       })
+
+      log('info', 'PROCESS_EVENT_ITEM_SUCCESS', {
+        requestId,
+        eventId: event.id,
+        type: event.type,
+      })
     } catch (err) {
       const attempts = (event.attempts ?? 0) + 1
       const maxAttempts = event.max_attempts ?? 5
       const shouldDeadLetter = attempts >= maxAttempts
+
+      log('error', 'PROCESS_EVENT_ITEM_FAIL', {
+        requestId,
+        eventId: event.id,
+        type: event.type,
+        attempts,
+        shouldDeadLetter,
+      })
 
       if (shouldDeadLetter) {
         const { error: deadInsertError } = await supabase
@@ -125,6 +150,11 @@ export async function processEvents(limit = 10) {
       })
     }
   }
+
+  log('info', 'PROCESS_EVENTS_FINISH', {
+    requestId,
+    processedCount: results.length,
+  })
 
   return results
 }

@@ -4,12 +4,24 @@ import { checkPermission } from '../permissions/checkPermission'
 import { createSupabaseServerClient } from '../db/supabaseServer'
 import { auditLog } from '../audit/auditLog'
 import { AppError } from '../errors/AppError'
+import { log } from '../utils/logger'
+import type { RequestContext } from '@/shared/types/context'
 
-export async function createSale(input: {
-  total: number
-  organization_id: string
-  idempotency_key: string
-}) {
+export async function createSale(
+  input: {
+    total: number
+    organization_id: string
+    idempotency_key: string
+  },
+  context: RequestContext
+) {
+  log('info', 'CREATE_SALE_START', {
+    context,
+    organization_id: input.organization_id,
+    total: input.total,
+    idempotency_key: input.idempotency_key,
+  })
+
   const user = await getUser()
 
   if (!user) {
@@ -41,6 +53,11 @@ export async function createSale(input: {
   })
 
   if (error) {
+    log('error', 'CREATE_SALE_RPC_FAIL', {
+      context,
+      error: error.message,
+    })
+
     throw new AppError(error.message || 'SALE_TRANSACTION_FAILED', 500)
   }
 
@@ -61,11 +78,21 @@ export async function createSale(input: {
         total: sale.total,
         organization_id: sale.organization_id,
         idempotency_key: input.idempotency_key,
+        request_id: context.requestId,
       },
     })
   } catch (err) {
-    console.error('AUDIT_LOG_FAIL', err)
+    log('error', 'AUDIT_LOG_FAIL', {
+      context,
+      sale_id: sale.id,
+    })
   }
+
+  log('info', 'CREATE_SALE_SUCCESS', {
+    context,
+    sale_id: sale.id,
+    organization_id: sale.organization_id,
+  })
 
   return sale
 }
