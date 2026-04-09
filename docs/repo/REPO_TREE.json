@@ -1,0 +1,683 @@
+{
+  "metadata": {
+    "generated_at": "2026-04-09T17:32:32.924Z",
+    "repository": "SupportingBasesOficial/core-platform",
+    "branch": "main",
+    "commit_sha": "e84db7b074e4a4bb438fb66cde7865d07cef280f",
+    "generator": "scripts/generate-repo-manifest.mjs@1",
+    "root": "/home/runner/work/core-platform/core-platform"
+  },
+  "tree": {
+    "name": ".",
+    "path": ".",
+    "node_type": "directory",
+    "children": [
+      {
+        "name": ".eslintrc.json",
+        "path": ".eslintrc.json",
+        "node_type": "file",
+        "kind": "file",
+        "layer": "root_or_other"
+      },
+      {
+        "name": ".github",
+        "path": ".github",
+        "node_type": "directory",
+        "children": [
+          {
+            "name": "workflows",
+            "path": ".github/workflows",
+            "node_type": "directory",
+            "children": [
+              {
+                "name": "generate-repo-manifest.yml",
+                "path": ".github/workflows/generate-repo-manifest.yml",
+                "node_type": "file",
+                "kind": "workflow",
+                "layer": "github_workflow"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": ".gitignore",
+        "path": ".gitignore",
+        "node_type": "file",
+        "kind": "file",
+        "layer": "root_or_other"
+      },
+      {
+        "name": ".nvmrc",
+        "path": ".nvmrc",
+        "node_type": "file",
+        "kind": "node_version_file",
+        "layer": "root_or_other"
+      },
+      {
+        "name": "docs",
+        "path": "docs",
+        "node_type": "directory",
+        "children": [
+          {
+            "name": "CORE_OVERVIEW.md",
+            "path": "docs/CORE_OVERVIEW.md",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "docs"
+          },
+          {
+            "name": "MODULE_PATTERN.md",
+            "path": "docs/MODULE_PATTERN.md",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "docs"
+          },
+          {
+            "name": "SETUP.md",
+            "path": "docs/SETUP.md",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "docs"
+          }
+        ]
+      },
+      {
+        "name": "next.config.mjs",
+        "path": "next.config.mjs",
+        "node_type": "file",
+        "kind": "file",
+        "layer": "root_or_other"
+      },
+      {
+        "name": "package-lock.json",
+        "path": "package-lock.json",
+        "node_type": "file",
+        "kind": "file",
+        "layer": "root_or_other"
+      },
+      {
+        "name": "package.json",
+        "path": "package.json",
+        "node_type": "file",
+        "kind": "package_manifest",
+        "layer": "root_or_other"
+      },
+      {
+        "name": "postcss.config.mjs",
+        "path": "postcss.config.mjs",
+        "node_type": "file",
+        "kind": "file",
+        "layer": "root_or_other"
+      },
+      {
+        "name": "public",
+        "path": "public",
+        "node_type": "directory",
+        "children": [
+          {
+            "name": "next.svg",
+            "path": "public/next.svg",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "root_or_other"
+          },
+          {
+            "name": "vercel.svg",
+            "path": "public/vercel.svg",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "root_or_other"
+          }
+        ]
+      },
+      {
+        "name": "README.md",
+        "path": "README.md",
+        "node_type": "file",
+        "kind": "readme",
+        "layer": "root_or_other"
+      },
+      {
+        "name": "scripts",
+        "path": "scripts",
+        "node_type": "directory",
+        "children": [
+          {
+            "name": "generate-repo-manifest.mjs",
+            "path": "scripts/generate-repo-manifest.mjs",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "scripts"
+          }
+        ]
+      },
+      {
+        "name": "src",
+        "path": "src",
+        "node_type": "directory",
+        "children": [
+          {
+            "name": "app",
+            "path": "src/app",
+            "node_type": "directory",
+            "children": [
+              {
+                "name": "api",
+                "path": "src/app/api",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "_utils",
+                    "path": "src/app/api/_utils",
+                    "node_type": "directory",
+                    "children": [
+                      {
+                        "name": "applyRequestMetric.ts",
+                        "path": "src/app/api/_utils/applyRequestMetric.ts",
+                        "node_type": "file",
+                        "kind": "file",
+                        "layer": "app"
+                      },
+                      {
+                        "name": "handleError.ts",
+                        "path": "src/app/api/_utils/handleError.ts",
+                        "node_type": "file",
+                        "kind": "file",
+                        "layer": "app"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "events",
+                    "path": "src/app/api/events",
+                    "node_type": "directory",
+                    "children": [
+                      {
+                        "name": "create-failing",
+                        "path": "src/app/api/events/create-failing",
+                        "node_type": "directory",
+                        "children": [
+                          {
+                            "name": "route.ts",
+                            "path": "src/app/api/events/create-failing/route.ts",
+                            "node_type": "file",
+                            "kind": "route_handler",
+                            "layer": "app"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "process",
+                        "path": "src/app/api/events/process",
+                        "node_type": "directory",
+                        "children": [
+                          {
+                            "name": "route.ts",
+                            "path": "src/app/api/events/process/route.ts",
+                            "node_type": "file",
+                            "kind": "route_handler",
+                            "layer": "app"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "sales",
+                    "path": "src/app/api/sales",
+                    "node_type": "directory",
+                    "children": [
+                      {
+                        "name": "route.ts",
+                        "path": "src/app/api/sales/route.ts",
+                        "node_type": "file",
+                        "kind": "route_handler",
+                        "layer": "app"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "favicon.ico",
+                "path": "src/app/favicon.ico",
+                "node_type": "file",
+                "kind": "file",
+                "layer": "app"
+              },
+              {
+                "name": "globals.css",
+                "path": "src/app/globals.css",
+                "node_type": "file",
+                "kind": "file",
+                "layer": "app"
+              },
+              {
+                "name": "layout.tsx",
+                "path": "src/app/layout.tsx",
+                "node_type": "file",
+                "kind": "layout",
+                "layer": "app"
+              },
+              {
+                "name": "login",
+                "path": "src/app/login",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "path": "src/app/login/page.tsx",
+                    "node_type": "file",
+                    "kind": "page",
+                    "layer": "app"
+                  }
+                ]
+              },
+              {
+                "name": "logout",
+                "path": "src/app/logout",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "path": "src/app/logout/page.tsx",
+                    "node_type": "file",
+                    "kind": "page",
+                    "layer": "app"
+                  }
+                ]
+              },
+              {
+                "name": "page.tsx",
+                "path": "src/app/page.tsx",
+                "node_type": "file",
+                "kind": "page",
+                "layer": "app"
+              },
+              {
+                "name": "test-auth",
+                "path": "src/app/test-auth",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "path": "src/app/test-auth/page.tsx",
+                    "node_type": "file",
+                    "kind": "page",
+                    "layer": "app"
+                  }
+                ]
+              },
+              {
+                "name": "test-dead-events",
+                "path": "src/app/test-dead-events",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "path": "src/app/test-dead-events/page.tsx",
+                    "node_type": "file",
+                    "kind": "page",
+                    "layer": "app"
+                  }
+                ]
+              },
+              {
+                "name": "test-events",
+                "path": "src/app/test-events",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "path": "src/app/test-events/page.tsx",
+                    "node_type": "file",
+                    "kind": "page",
+                    "layer": "app"
+                  }
+                ]
+              },
+              {
+                "name": "test-sale",
+                "path": "src/app/test-sale",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "path": "src/app/test-sale/page.tsx",
+                    "node_type": "file",
+                    "kind": "page",
+                    "layer": "app"
+                  }
+                ]
+              },
+              {
+                "name": "test-tenant",
+                "path": "src/app/test-tenant",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "page.tsx",
+                    "path": "src/app/test-tenant/page.tsx",
+                    "node_type": "file",
+                    "kind": "page",
+                    "layer": "app"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "middleware.ts",
+            "path": "src/middleware.ts",
+            "node_type": "file",
+            "kind": "middleware",
+            "layer": "app"
+          },
+          {
+            "name": "modules",
+            "path": "src/modules",
+            "node_type": "directory",
+            "children": [
+              {
+                "name": "vendas",
+                "path": "src/modules/vendas",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "schema.ts",
+                    "path": "src/modules/vendas/schema.ts",
+                    "node_type": "file",
+                    "kind": "file",
+                    "layer": "root_or_other"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "server",
+            "path": "src/server",
+            "node_type": "directory",
+            "children": [
+              {
+                "name": "audit",
+                "path": "src/server/audit",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "auditLog.ts",
+                    "path": "src/server/audit/auditLog.ts",
+                    "node_type": "file",
+                    "kind": "file",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "auth",
+                "path": "src/server/auth",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "getCurrentOrg.ts",
+                    "path": "src/server/auth/getCurrentOrg.ts",
+                    "node_type": "file",
+                    "kind": "auth_module",
+                    "layer": "server"
+                  },
+                  {
+                    "name": "getUser.ts",
+                    "path": "src/server/auth/getUser.ts",
+                    "node_type": "file",
+                    "kind": "auth_module",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "db",
+                "path": "src/server/db",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "supabaseBrowser.ts",
+                    "path": "src/server/db/supabaseBrowser.ts",
+                    "node_type": "file",
+                    "kind": "file",
+                    "layer": "server"
+                  },
+                  {
+                    "name": "supabaseServer.ts",
+                    "path": "src/server/db/supabaseServer.ts",
+                    "node_type": "file",
+                    "kind": "file",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "errors",
+                "path": "src/server/errors",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "AppError.ts",
+                    "path": "src/server/errors/AppError.ts",
+                    "node_type": "file",
+                    "kind": "file",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "events",
+                "path": "src/server/events",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "eventBus.ts",
+                    "path": "src/server/events/eventBus.ts",
+                    "node_type": "file",
+                    "kind": "event_module",
+                    "layer": "server"
+                  },
+                  {
+                    "name": "worker.ts",
+                    "path": "src/server/events/worker.ts",
+                    "node_type": "file",
+                    "kind": "event_module",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "permissions",
+                "path": "src/server/permissions",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "checkPermission.ts",
+                    "path": "src/server/permissions/checkPermission.ts",
+                    "node_type": "file",
+                    "kind": "file",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "repositories",
+                "path": "src/server/repositories",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "salesRepository.ts",
+                    "path": "src/server/repositories/salesRepository.ts",
+                    "node_type": "file",
+                    "kind": "repository",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "services",
+                "path": "src/server/services",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "salesService.ts",
+                    "path": "src/server/services/salesService.ts",
+                    "node_type": "file",
+                    "kind": "service",
+                    "layer": "server"
+                  }
+                ]
+              },
+              {
+                "name": "utils",
+                "path": "src/server/utils",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "logger.ts",
+                    "path": "src/server/utils/logger.ts",
+                    "node_type": "file",
+                    "kind": "utility",
+                    "layer": "server"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "shared",
+            "path": "src/shared",
+            "node_type": "directory",
+            "children": [
+              {
+                "name": "types",
+                "path": "src/shared/types",
+                "node_type": "directory",
+                "children": [
+                  {
+                    "name": "context.ts",
+                    "path": "src/shared/types/context.ts",
+                    "node_type": "file",
+                    "kind": "file",
+                    "layer": "root_or_other"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "supabase",
+        "path": "supabase",
+        "node_type": "directory",
+        "children": [
+          {
+            "name": ".gitignore",
+            "path": "supabase/.gitignore",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "root_or_other"
+          },
+          {
+            "name": "config.toml",
+            "path": "supabase/config.toml",
+            "node_type": "file",
+            "kind": "file",
+            "layer": "root_or_other"
+          },
+          {
+            "name": "migrations",
+            "path": "supabase/migrations",
+            "node_type": "directory",
+            "children": [
+              {
+                "name": "0001_core_platform_base.sql",
+                "path": "supabase/migrations/0001_core_platform_base.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "0002_sales_transaction_rpc.sql",
+                "path": "supabase/migrations/0002_sales_transaction_rpc.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "20260401230904_sales_idempotency.sql",
+                "path": "supabase/migrations/20260401230904_sales_idempotency.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "20260401231854_sales_transaction_rpc_idempotent.sql",
+                "path": "supabase/migrations/20260401231854_sales_transaction_rpc_idempotent.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "20260402003108_events_worker_retry_base.sql",
+                "path": "supabase/migrations/20260402003108_events_worker_retry_base.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "20260402003302_lock_events_function.sql",
+                "path": "supabase/migrations/20260402003302_lock_events_function.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "20260402004957_events_update_policy.sql",
+                "path": "supabase/migrations/20260402004957_events_update_policy.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "20260402010354_dead_events_table.sql",
+                "path": "supabase/migrations/20260402010354_dead_events_table.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              },
+              {
+                "name": "20260402010527_dead_events_policies.sql",
+                "path": "supabase/migrations/20260402010527_dead_events_policies.sql",
+                "node_type": "file",
+                "kind": "migration",
+                "layer": "supabase_migrations"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "tailwind.config.ts",
+        "path": "tailwind.config.ts",
+        "node_type": "file",
+        "kind": "file",
+        "layer": "root_or_other"
+      },
+      {
+        "name": "tsconfig.json",
+        "path": "tsconfig.json",
+        "node_type": "file",
+        "kind": "typescript_config",
+        "layer": "root_or_other"
+      }
+    ]
+  },
+  "warnings": []
+}

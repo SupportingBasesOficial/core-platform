@@ -1,0 +1,754 @@
+{
+  "metadata": {
+    "generated_at": "2026-04-09T17:32:32.924Z",
+    "repository": "SupportingBasesOficial/core-platform",
+    "branch": "main",
+    "commit_sha": "e84db7b074e4a4bb438fb66cde7865d07cef280f",
+    "generator": "scripts/generate-repo-manifest.mjs@1",
+    "root": "/home/runner/work/core-platform/core-platform"
+  },
+  "contracts": {
+    "sql_sources": [
+      "supabase/migrations/0001_core_platform_base.sql",
+      "supabase/migrations/0002_sales_transaction_rpc.sql",
+      "supabase/migrations/20260401230904_sales_idempotency.sql",
+      "supabase/migrations/20260401231854_sales_transaction_rpc_idempotent.sql",
+      "supabase/migrations/20260402003108_events_worker_retry_base.sql",
+      "supabase/migrations/20260402003302_lock_events_function.sql",
+      "supabase/migrations/20260402004957_events_update_policy.sql",
+      "supabase/migrations/20260402010354_dead_events_table.sql",
+      "supabase/migrations/20260402010527_dead_events_policies.sql"
+    ],
+    "tables": [
+      {
+        "raw": "organizations",
+        "qualified_name": "organizations",
+        "schema": null,
+        "name": "organizations",
+        "columns": [
+          {
+            "name": "id",
+            "data_type": "uuid",
+            "nullable": true,
+            "has_default": true,
+            "default_value": "gen_random_uuid()",
+            "references": null,
+            "literal_sql": "id uuid primary key default gen_random_uuid()"
+          },
+          {
+            "name": "name",
+            "data_type": "text",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "name text not null"
+          },
+          {
+            "name": "created_at",
+            "data_type": "timestamptz",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "now()",
+            "references": null,
+            "literal_sql": "created_at timestamptz not null default now()"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql_header": "create table if not exists organizations (\n  id uuid primary key default gen_random_uuid(),\n  name text not null,\n  created_at timestamptz not null default now()\n);"
+      },
+      {
+        "raw": "profiles",
+        "qualified_name": "profiles",
+        "schema": null,
+        "name": "profiles",
+        "columns": [
+          {
+            "name": "id",
+            "data_type": "uuid",
+            "nullable": true,
+            "has_default": false,
+            "default_value": null,
+            "references": {
+              "raw": "auth.users",
+              "qualified_name": "auth.users",
+              "schema": "auth",
+              "name": "users",
+              "column": "id"
+            },
+            "literal_sql": "id uuid primary key references auth.users(id) on delete cascade"
+          },
+          {
+            "name": "email",
+            "data_type": "text",
+            "nullable": true,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "email text"
+          },
+          {
+            "name": "full_name",
+            "data_type": "text",
+            "nullable": true,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "full_name text"
+          },
+          {
+            "name": "created_at",
+            "data_type": "timestamptz",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "now()",
+            "references": null,
+            "literal_sql": "created_at timestamptz not null default now()"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql_header": "create table if not exists profiles (\n  id uuid primary key references auth.users(id) on delete cascade,\n  email text,\n  full_name text,\n  created_at timestamptz not null default now()\n);"
+      },
+      {
+        "raw": "memberships",
+        "qualified_name": "memberships",
+        "schema": null,
+        "name": "memberships",
+        "columns": [
+          {
+            "name": "id",
+            "data_type": "uuid",
+            "nullable": true,
+            "has_default": true,
+            "default_value": "gen_random_uuid()",
+            "references": null,
+            "literal_sql": "id uuid primary key default gen_random_uuid()"
+          },
+          {
+            "name": "user_id",
+            "data_type": "uuid",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": {
+              "raw": "profiles",
+              "qualified_name": "profiles",
+              "schema": null,
+              "name": "profiles",
+              "column": "id"
+            },
+            "literal_sql": "user_id uuid not null references profiles(id) on delete cascade"
+          },
+          {
+            "name": "organization_id",
+            "data_type": "uuid",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": {
+              "raw": "organizations",
+              "qualified_name": "organizations",
+              "schema": null,
+              "name": "organizations",
+              "column": "id"
+            },
+            "literal_sql": "organization_id uuid not null references organizations(id) on delete cascade"
+          },
+          {
+            "name": "role",
+            "data_type": "text",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "role text not null"
+          },
+          {
+            "name": "created_at",
+            "data_type": "timestamptz",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "now()",
+            "references": null,
+            "literal_sql": "created_at timestamptz not null default now()"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql_header": "create table if not exists memberships (\n  id uuid primary key default gen_random_uuid(),\n  user_id uuid not null references profiles(id) on delete cascade,\n  organization_id uuid not null references organizations(id) on delete cascade,\n  role text not null,\n  created_at timestamptz not null default"
+      },
+      {
+        "raw": "role_permissions",
+        "qualified_name": "role_permissions",
+        "schema": null,
+        "name": "role_permissions",
+        "columns": [
+          {
+            "name": "id",
+            "data_type": "uuid",
+            "nullable": true,
+            "has_default": true,
+            "default_value": "gen_random_uuid()",
+            "references": null,
+            "literal_sql": "id uuid primary key default gen_random_uuid()"
+          },
+          {
+            "name": "role",
+            "data_type": "text",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "role text not null"
+          },
+          {
+            "name": "permission",
+            "data_type": "text",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "permission text not null"
+          },
+          {
+            "name": "created_at",
+            "data_type": "timestamptz",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "now()",
+            "references": null,
+            "literal_sql": "created_at timestamptz not null default now()"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql_header": "create table if not exists role_permissions (\n  id uuid primary key default gen_random_uuid(),\n  role text not null,\n  permission text not null,\n  created_at timestamptz not null default now()\n);"
+      },
+      {
+        "raw": "sales",
+        "qualified_name": "sales",
+        "schema": null,
+        "name": "sales",
+        "columns": [
+          {
+            "name": "id",
+            "data_type": "uuid",
+            "nullable": true,
+            "has_default": true,
+            "default_value": "gen_random_uuid()",
+            "references": null,
+            "literal_sql": "id uuid primary key default gen_random_uuid()"
+          },
+          {
+            "name": "organization_id",
+            "data_type": "uuid",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": {
+              "raw": "organizations",
+              "qualified_name": "organizations",
+              "schema": null,
+              "name": "organizations",
+              "column": "id"
+            },
+            "literal_sql": "organization_id uuid not null references organizations(id) on delete cascade"
+          },
+          {
+            "name": "total",
+            "data_type": "numeric",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "total numeric not null"
+          },
+          {
+            "name": "created_at",
+            "data_type": "timestamptz",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "now()",
+            "references": null,
+            "literal_sql": "created_at timestamptz not null default now()"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql_header": "create table if not exists sales (\n  id uuid primary key default gen_random_uuid(),\n  organization_id uuid not null references organizations(id) on delete cascade,\n  total numeric not null,\n  created_at timestamptz not null default now()\n);"
+      },
+      {
+        "raw": "events",
+        "qualified_name": "events",
+        "schema": null,
+        "name": "events",
+        "columns": [
+          {
+            "name": "id",
+            "data_type": "uuid",
+            "nullable": true,
+            "has_default": true,
+            "default_value": "gen_random_uuid()",
+            "references": null,
+            "literal_sql": "id uuid primary key default gen_random_uuid()"
+          },
+          {
+            "name": "type",
+            "data_type": "text",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "type text not null"
+          },
+          {
+            "name": "payload",
+            "data_type": "jsonb",
+            "nullable": true,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "payload jsonb"
+          },
+          {
+            "name": "organization_id",
+            "data_type": "uuid",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": {
+              "raw": "organizations",
+              "qualified_name": "organizations",
+              "schema": null,
+              "name": "organizations",
+              "column": "id"
+            },
+            "literal_sql": "organization_id uuid not null references organizations(id) on delete cascade"
+          },
+          {
+            "name": "status",
+            "data_type": "text",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "'pending'",
+            "references": null,
+            "literal_sql": "status text not null default 'pending'"
+          },
+          {
+            "name": "attempts",
+            "data_type": "integer",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "0",
+            "references": null,
+            "literal_sql": "attempts integer not null default 0"
+          },
+          {
+            "name": "created_at",
+            "data_type": "timestamptz",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "now()",
+            "references": null,
+            "literal_sql": "created_at timestamptz not null default now()"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql_header": "create table if not exists events (\n  id uuid primary key default gen_random_uuid(),\n  type text not null,\n  payload jsonb,\n  organization_id uuid not null references organizations(id) on delete cascade,\n  status text not null default 'pending',\n  attempts integer not null default 0,\n  created_at ti"
+      },
+      {
+        "raw": "audit_logs",
+        "qualified_name": "audit_logs",
+        "schema": null,
+        "name": "audit_logs",
+        "columns": [
+          {
+            "name": "id",
+            "data_type": "uuid",
+            "nullable": true,
+            "has_default": true,
+            "default_value": "gen_random_uuid()",
+            "references": null,
+            "literal_sql": "id uuid primary key default gen_random_uuid()"
+          },
+          {
+            "name": "user_id",
+            "data_type": "uuid",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": {
+              "raw": "profiles",
+              "qualified_name": "profiles",
+              "schema": null,
+              "name": "profiles",
+              "column": "id"
+            },
+            "literal_sql": "user_id uuid not null references profiles(id) on delete cascade"
+          },
+          {
+            "name": "action",
+            "data_type": "text",
+            "nullable": false,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "action text not null"
+          },
+          {
+            "name": "metadata",
+            "data_type": "jsonb",
+            "nullable": true,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "metadata jsonb"
+          },
+          {
+            "name": "created_at",
+            "data_type": "timestamptz",
+            "nullable": false,
+            "has_default": true,
+            "default_value": "now()",
+            "references": null,
+            "literal_sql": "created_at timestamptz not null default now()"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql_header": "create table if not exists audit_logs (\n  id uuid primary key default gen_random_uuid(),\n  user_id uuid not null references profiles(id) on delete cascade,\n  action text not null,\n  metadata jsonb,\n  created_at timestamptz not null default now()\n);"
+      },
+      {
+        "raw": "dead_events",
+        "qualified_name": "dead_events",
+        "schema": null,
+        "name": "dead_events",
+        "columns": [
+          {
+            "name": "like",
+            "data_type": "events including all",
+            "nullable": true,
+            "has_default": false,
+            "default_value": null,
+            "references": null,
+            "literal_sql": "like events including all"
+          }
+        ],
+        "table_constraints": [],
+        "source_path": "supabase/migrations/20260402010354_dead_events_table.sql",
+        "literal_sql_header": "create table if not exists dead_events (\n  like events including all\n);"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "unique_sales_org_idempotency",
+        "unique": true,
+        "table": {
+          "raw": "sales",
+          "qualified_name": "sales",
+          "schema": null,
+          "name": "sales"
+        },
+        "columns_literal": "organization_id, idempotency_key",
+        "source_path": "supabase/migrations/20260401230904_sales_idempotency.sql",
+        "literal_sql": "create unique index if not exists unique_sales_org_idempotency\non sales (organization_id, idempotency_key)"
+      },
+      {
+        "name": "idx_events_status_next_retry",
+        "unique": false,
+        "table": {
+          "raw": "events",
+          "qualified_name": "events",
+          "schema": null,
+          "name": "events"
+        },
+        "columns_literal": "status, next_retry_at, created_at",
+        "source_path": "supabase/migrations/20260402003108_events_worker_retry_base.sql",
+        "literal_sql": "create index if not exists idx_events_status_next_retry\non events (status, next_retry_at, created_at)"
+      }
+    ],
+    "policies": [
+      {
+        "name": "memberships_select_own",
+        "table": {
+          "raw": "memberships",
+          "qualified_name": "memberships",
+          "schema": null,
+          "name": "memberships"
+        },
+        "command": "select",
+        "using_expression": "user_id = auth.uid()",
+        "with_check_expression": null,
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"memberships_select_own\"\non memberships\nfor select\nusing (user_id = auth.uid());"
+      },
+      {
+        "name": "profiles_select_own",
+        "table": {
+          "raw": "profiles",
+          "qualified_name": "profiles",
+          "schema": null,
+          "name": "profiles"
+        },
+        "command": "select",
+        "using_expression": "id = auth.uid()",
+        "with_check_expression": null,
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"profiles_select_own\"\non profiles\nfor select\nusing (id = auth.uid());"
+      },
+      {
+        "name": "profiles_update_own",
+        "table": {
+          "raw": "profiles",
+          "qualified_name": "profiles",
+          "schema": null,
+          "name": "profiles"
+        },
+        "command": "update",
+        "using_expression": "id = auth.uid()",
+        "with_check_expression": "id = auth.uid()",
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"profiles_update_own\"\non profiles\nfor update\nusing (id = auth.uid())\nwith check (id = auth.uid());"
+      },
+      {
+        "name": "sales_select_same_org",
+        "table": {
+          "raw": "sales",
+          "qualified_name": "sales",
+          "schema": null,
+          "name": "sales"
+        },
+        "command": "select",
+        "using_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "with_check_expression": null,
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"sales_select_same_org\"\non sales\nfor select\nusing (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n);"
+      },
+      {
+        "name": "sales_insert_same_org",
+        "table": {
+          "raw": "sales",
+          "qualified_name": "sales",
+          "schema": null,
+          "name": "sales"
+        },
+        "command": "insert",
+        "using_expression": null,
+        "with_check_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"sales_insert_same_org\"\non sales\nfor insert\nwith check (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n);"
+      },
+      {
+        "name": "events_select_same_org",
+        "table": {
+          "raw": "events",
+          "qualified_name": "events",
+          "schema": null,
+          "name": "events"
+        },
+        "command": "select",
+        "using_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "with_check_expression": null,
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"events_select_same_org\"\non events\nfor select\nusing (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n);"
+      },
+      {
+        "name": "events_insert_same_org",
+        "table": {
+          "raw": "events",
+          "qualified_name": "events",
+          "schema": null,
+          "name": "events"
+        },
+        "command": "insert",
+        "using_expression": null,
+        "with_check_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"events_insert_same_org\"\non events\nfor insert\nwith check (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n);"
+      },
+      {
+        "name": "audit_logs_select_own",
+        "table": {
+          "raw": "audit_logs",
+          "qualified_name": "audit_logs",
+          "schema": null,
+          "name": "audit_logs"
+        },
+        "command": "select",
+        "using_expression": "user_id = auth.uid()",
+        "with_check_expression": null,
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"audit_logs_select_own\"\non audit_logs\nfor select\nusing (user_id = auth.uid());"
+      },
+      {
+        "name": "audit_logs_insert_own",
+        "table": {
+          "raw": "audit_logs",
+          "qualified_name": "audit_logs",
+          "schema": null,
+          "name": "audit_logs"
+        },
+        "command": "insert",
+        "using_expression": null,
+        "with_check_expression": "user_id = auth.uid()",
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "create policy \"audit_logs_insert_own\"\non audit_logs\nfor insert\nwith check (user_id = auth.uid());"
+      },
+      {
+        "name": "events_update_same_org",
+        "table": {
+          "raw": "events",
+          "qualified_name": "events",
+          "schema": null,
+          "name": "events"
+        },
+        "command": "update",
+        "using_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "with_check_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "source_path": "supabase/migrations/20260402004957_events_update_policy.sql",
+        "literal_sql": "create policy \"events_update_same_org\"\non events\nfor update\nusing (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n)\nwith check (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n);"
+      },
+      {
+        "name": "dead_events_select_same_org",
+        "table": {
+          "raw": "dead_events",
+          "qualified_name": "dead_events",
+          "schema": null,
+          "name": "dead_events"
+        },
+        "command": "select",
+        "using_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "with_check_expression": null,
+        "source_path": "supabase/migrations/20260402010527_dead_events_policies.sql",
+        "literal_sql": "create policy \"dead_events_select_same_org\"\non dead_events\nfor select\nusing (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n);"
+      },
+      {
+        "name": "dead_events_insert_same_org",
+        "table": {
+          "raw": "dead_events",
+          "qualified_name": "dead_events",
+          "schema": null,
+          "name": "dead_events"
+        },
+        "command": "insert",
+        "using_expression": null,
+        "with_check_expression": "organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )",
+        "source_path": "supabase/migrations/20260402010527_dead_events_policies.sql",
+        "literal_sql": "create policy \"dead_events_insert_same_org\"\non dead_events\nfor insert\nwith check (\n  organization_id in (\n    select organization_id\n    from memberships\n    where user_id = auth.uid()\n  )\n);"
+      }
+    ],
+    "functions": [
+      {
+        "name": {
+          "raw": "create_sale_with_event",
+          "qualified_name": "create_sale_with_event",
+          "schema": null,
+          "name": "create_sale_with_event"
+        },
+        "arguments_literal": "p_total numeric,\n  p_organization_id uuid",
+        "returns_literal": "json language plpgsql security invoker as",
+        "language": "plpgsql",
+        "security": "invoker",
+        "source_path": "supabase/migrations/0002_sales_transaction_rpc.sql",
+        "literal_sql_header": "create or replace function create_sale_with_event(\n  p_total numeric,\n  p_organization_id uuid\n)\nreturns json\nlanguage plpgsql\nsecurity invoker\nas $$\ndeclare\n  v_sale sales;"
+      },
+      {
+        "name": {
+          "raw": "public.create_sale_with_event",
+          "qualified_name": "public.create_sale_with_event",
+          "schema": "public",
+          "name": "create_sale_with_event"
+        },
+        "arguments_literal": "p_total numeric,\n  p_organization_id uuid,\n  p_idempotency_key text",
+        "returns_literal": "json language plpgsql security invoker as",
+        "language": "plpgsql",
+        "security": "invoker",
+        "source_path": "supabase/migrations/20260401231854_sales_transaction_rpc_idempotent.sql",
+        "literal_sql_header": "create or replace function public.create_sale_with_event(\n  p_total numeric,\n  p_organization_id uuid,\n  p_idempotency_key text\n)\nreturns json\nlanguage plpgsql\nsecurity invoker\nas $$\ndeclare\n  v_sale sales;"
+      },
+      {
+        "name": {
+          "raw": "public.lock_events",
+          "qualified_name": "public.lock_events",
+          "schema": "public",
+          "name": "lock_events"
+        },
+        "arguments_literal": "limit_count integer default 10",
+        "returns_literal": "setof events language sql security invoker as",
+        "language": "sql",
+        "security": "invoker",
+        "source_path": "supabase/migrations/20260402003302_lock_events_function.sql",
+        "literal_sql_header": "create or replace function public.lock_events(limit_count integer default 10)\nreturns setof events\nlanguage sql\nsecurity invoker\nas $$\n  update events\n  set status = 'processing'\n  where id in (\n    select id\n    from events\n    where status = 'pending'\n      and (next_retry_at is null or next_retry_at <= now())\n    order by created_at asc\n    limit limit_count\n    for update skip locked\n  )\n  returning *;"
+      }
+    ],
+    "views": [],
+    "triggers": [],
+    "enums": [],
+    "rls_enabled_tables": [
+      {
+        "table": {
+          "raw": "profiles",
+          "qualified_name": "profiles",
+          "schema": null,
+          "name": "profiles"
+        },
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "alter table profiles enable row level security"
+      },
+      {
+        "table": {
+          "raw": "memberships",
+          "qualified_name": "memberships",
+          "schema": null,
+          "name": "memberships"
+        },
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "alter table memberships enable row level security"
+      },
+      {
+        "table": {
+          "raw": "sales",
+          "qualified_name": "sales",
+          "schema": null,
+          "name": "sales"
+        },
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "alter table sales enable row level security"
+      },
+      {
+        "table": {
+          "raw": "events",
+          "qualified_name": "events",
+          "schema": null,
+          "name": "events"
+        },
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "alter table events enable row level security"
+      },
+      {
+        "table": {
+          "raw": "audit_logs",
+          "qualified_name": "audit_logs",
+          "schema": null,
+          "name": "audit_logs"
+        },
+        "source_path": "supabase/migrations/0001_core_platform_base.sql",
+        "literal_sql": "alter table audit_logs enable row level security"
+      },
+      {
+        "table": {
+          "raw": "dead_events",
+          "qualified_name": "dead_events",
+          "schema": null,
+          "name": "dead_events"
+        },
+        "source_path": "supabase/migrations/20260402010527_dead_events_policies.sql",
+        "literal_sql": "alter table dead_events enable row level security"
+      }
+    ]
+  },
+  "warnings": []
+}
