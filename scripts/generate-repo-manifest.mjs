@@ -998,7 +998,7 @@ async function main() {
     repository: process.env.GITHUB_REPOSITORY ?? null,
     branch: process.env.GITHUB_REF_NAME ?? null,
     commit_sha: process.env.GITHUB_SHA ?? null,
-    generator: 'scripts/generate-repo-manifest-v3.mjs@3',
+    generator: 'scripts/generate-repo-manifest.mjs',
     root: ROOT,
   }
 
