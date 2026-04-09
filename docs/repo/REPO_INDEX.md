@@ -4,11 +4,11 @@ Gerado automaticamente a partir da realidade do repositório.
 
 ## Metadados
 
-- generated_at: `2026-04-09T19:49:51.169Z`
+- generated_at: `2026-04-09T19:58:04.330Z`
 - repository: `SupportingBasesOficial/core-platform`
 - branch: `main`
-- commit_sha: `d872052a2dcfbfc9d4112d26db4056fa9916a777`
-- generator: `scripts/generate-repo-manifest-v3.mjs@3`
+- commit_sha: `f4c317be4472b627602a1d04bc8a953ab4720081`
+- generator: `scripts/generate-repo-manifest.mjs`
 
 ## Contagem estrutural
 
