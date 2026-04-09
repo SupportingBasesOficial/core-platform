@@ -28,9 +28,7 @@ const IGNORED_DIRS = new Set([
   '.vscode',
 ])
 
-const IGNORED_FILES = new Set([
-  '.DS_Store',
-])
+const IGNORED_FILES = new Set(['.DS_Store'])
 
 const TEXT_EXTENSIONS = new Set([
   '.js',
@@ -245,24 +243,33 @@ function splitSqlTopLevel(input) {
   let depth = 0
   let inSingle = false
   let inDouble = false
+  let inDollarQuote = false
 
   for (let i = 0; i < input.length; i += 1) {
     const char = input[i]
     const prev = input[i - 1]
+    const nextTwo = input.slice(i, i + 2)
 
-    if (char === "'" && prev !== '\\' && !inDouble) {
+    if (!inSingle && !inDouble && nextTwo === '$$') {
+      inDollarQuote = !inDollarQuote
+      current += '$$'
+      i += 1
+      continue
+    }
+
+    if (!inDollarQuote && char === "'" && prev !== '\\' && !inDouble) {
       inSingle = !inSingle
       current += char
       continue
     }
 
-    if (char === '"' && !inSingle) {
+    if (!inDollarQuote && char === '"' && !inSingle) {
       inDouble = !inDouble
       current += char
       continue
     }
 
-    if (!inSingle && !inDouble) {
+    if (!inSingle && !inDouble && !inDollarQuote) {
       if (char === '(') depth += 1
       if (char === ')') depth = Math.max(0, depth - 1)
 
@@ -309,11 +316,13 @@ function normalizeSqlName(rawName) {
 }
 
 function parseColumnDefinition(definition) {
-  if (/^(constraint|primary key|foreign key|unique|check)\b/i.test(definition.trim())) {
+  const trimmed = definition.trim()
+
+  if (/^(constraint|primary key|foreign key|unique|check|like)\b/i.test(trimmed)) {
     return null
   }
 
-  const match = definition.match(
+  const match = trimmed.match(
     /^"?(?<name>[A-Za-z_][A-Za-z0-9_]*)"?\s+(?<type>[A-Za-z0-9_.\s\[\]]+?)(?=\s+(?:not null|null|default|check|references|constraint|primary key|unique)\b|$)/i,
   )
 
@@ -321,15 +330,20 @@ function parseColumnDefinition(definition) {
     return null
   }
 
-  const refMatch = definition.match(/\breferences\s+([A-Za-z0-9_."-]+)\s*\(([^)]+)\)/i)
-  const defaultMatch = definition.match(
+  const refMatch = trimmed.match(/\breferences\s+([A-Za-z0-9_."-]+)\s*\(([^)]+)\)/i)
+  const defaultMatch = trimmed.match(
     /\bdefault\s+(.+?)(?=\s+(?:check|references|constraint|primary key|unique|not null|null)\b|$)/i,
   )
+  const isPrimaryKey = /\bprimary key\b/i.test(trimmed)
+  const isUnique = /\bunique\b/i.test(trimmed)
+  const checkMatch = trimmed.match(/\bcheck\s*\((.+)\)$/i)
 
   return {
     name: match.groups.name.trim(),
     data_type: match.groups.type.trim().replace(/\s+/g, ' '),
-    nullable: !/\bnot null\b/i.test(definition),
+    nullable: !(isPrimaryKey || /\bnot null\b/i.test(trimmed)),
+    primary_key: isPrimaryKey,
+    unique: isUnique,
     has_default: Boolean(defaultMatch),
     default_value: defaultMatch ? defaultMatch[1].trim() : null,
     references: refMatch
@@ -338,7 +352,104 @@ function parseColumnDefinition(definition) {
           column: refMatch[2].replace(/"/g, '').trim(),
         }
       : null,
-    literal_sql: definition.trim(),
+    check_expression: checkMatch ? checkMatch[1].trim() : null,
+    literal_sql: trimmed,
+  }
+}
+
+function parseTableConstraint(definition) {
+  const trimmed = definition.trim()
+  const namedConstraintMatch = trimmed.match(/^constraint\s+"?([A-Za-z0-9_]+)"?\s+([\s\S]+)$/i)
+  const constraintName = namedConstraintMatch ? namedConstraintMatch[1] : null
+  const body = namedConstraintMatch ? namedConstraintMatch[2].trim() : trimmed
+
+  const primaryKeyMatch = body.match(/^primary key\s*\(([^)]+)\)/i)
+  if (primaryKeyMatch) {
+    return {
+      constraint_type: 'primary_key',
+      constraint_name: constraintName,
+      columns_literal: primaryKeyMatch[1].trim(),
+      references: null,
+      check_expression: null,
+      literal_sql: trimmed,
+    }
+  }
+
+  const uniqueMatch = body.match(/^unique\s*\(([^)]+)\)/i)
+  if (uniqueMatch) {
+    return {
+      constraint_type: 'unique',
+      constraint_name: constraintName,
+      columns_literal: uniqueMatch[1].trim(),
+      references: null,
+      check_expression: null,
+      literal_sql: trimmed,
+    }
+  }
+
+  const foreignKeyMatch = body.match(
+    /^foreign key\s*\(([^)]+)\)\s+references\s+([A-Za-z0-9_."-]+)\s*\(([^)]+)\)/i,
+  )
+  if (foreignKeyMatch) {
+    return {
+      constraint_type: 'foreign_key',
+      constraint_name: constraintName,
+      columns_literal: foreignKeyMatch[1].trim(),
+      references: {
+        ...normalizeSqlName(foreignKeyMatch[2]),
+        column: foreignKeyMatch[3].replace(/"/g, '').trim(),
+      },
+      check_expression: null,
+      literal_sql: trimmed,
+    }
+  }
+
+  const checkMatch = body.match(/^check\s*\((.+)\)$/i)
+  if (checkMatch) {
+    return {
+      constraint_type: 'check',
+      constraint_name: constraintName,
+      columns_literal: null,
+      references: null,
+      check_expression: checkMatch[1].trim(),
+      literal_sql: trimmed,
+    }
+  }
+
+  if (/^like\s+/i.test(body)) {
+    return {
+      constraint_type: 'like_clause',
+      constraint_name: constraintName,
+      columns_literal: null,
+      references: null,
+      check_expression: null,
+      like_clause: parseLikeClause(body),
+      literal_sql: trimmed,
+    }
+  }
+
+  return {
+    constraint_type: 'unknown_constraint',
+    constraint_name: constraintName,
+    columns_literal: null,
+    references: null,
+    check_expression: null,
+    literal_sql: trimmed,
+  }
+}
+
+function parseLikeClause(definition) {
+  const trimmed = definition.trim()
+  const match = trimmed.match(/^like\s+([A-Za-z0-9_."-]+)(?:\s+(.*))?$/i)
+
+  if (!match) {
+    return null
+  }
+
+  return {
+    source_table: normalizeSqlName(match[1]),
+    options_literal: match[2]?.trim() ?? null,
+    literal_sql: trimmed,
   }
 }
 
@@ -352,21 +463,29 @@ function parseTables(sqlText, sourcePath) {
     const definitions = splitSqlTopLevel(body)
     const columns = []
     const tableConstraints = []
+    const likeClauses = []
 
     for (const definition of definitions) {
-      const parsed = parseColumnDefinition(definition)
-
-      if (parsed) {
-        columns.push(parsed)
-      } else {
-        tableConstraints.push(definition.trim())
+      const likeClause = parseLikeClause(definition)
+      if (likeClause) {
+        likeClauses.push(likeClause)
+        continue
       }
+
+      const parsedColumn = parseColumnDefinition(definition)
+      if (parsedColumn) {
+        columns.push(parsedColumn)
+        continue
+      }
+
+      tableConstraints.push(parseTableConstraint(definition))
     }
 
     tables.push({
       ...tableName,
       columns,
       table_constraints: tableConstraints,
+      like_clauses: likeClauses,
       source_path: sourcePath,
       literal_sql_header: match[0].slice(0, 300),
     })
@@ -443,9 +562,8 @@ function parseFunctions(sqlText, sourcePath) {
 
   for (const statement of statements) {
     const headerMatch = statement.match(
-      /create or replace function\s+([A-Za-z0-9_."-]+)\s*\(([\s\S]*?)\)\s*returns\s+([A-Za-z0-9_.\s]+)/i,
+      /create or replace function\s+([A-Za-z0-9_."-]+)\s*\(([\s\S]*?)\)\s*returns\s+([\s\S]*?)\s+language\s+([A-Za-z0-9_]+)/i,
     )
-    const languageMatch = statement.match(/\blanguage\s+([A-Za-z0-9_]+)/i)
     const securityInvoker = /\bsecurity invoker\b/i.test(statement)
     const securityDefiner = /\bsecurity definer\b/i.test(statement)
 
@@ -453,7 +571,7 @@ function parseFunctions(sqlText, sourcePath) {
       name: headerMatch ? normalizeSqlName(headerMatch[1]) : null,
       arguments_literal: headerMatch ? headerMatch[2].trim() : null,
       returns_literal: headerMatch ? headerMatch[3].trim().replace(/\s+/g, ' ') : null,
-      language: languageMatch ? languageMatch[1].trim().toLowerCase() : null,
+      language: headerMatch ? headerMatch[4].trim().toLowerCase() : null,
       security: securityDefiner ? 'definer' : securityInvoker ? 'invoker' : null,
       source_path: sourcePath,
       literal_sql_header: statement.slice(0, 500).trim(),
@@ -846,7 +964,7 @@ async function main() {
     repository: process.env.GITHUB_REPOSITORY ?? null,
     branch: process.env.GITHUB_REF_NAME ?? null,
     commit_sha: process.env.GITHUB_SHA ?? null,
-    generator: 'scripts/generate-repo-manifest.mjs@1',
+    generator: 'scripts/generate-repo-manifest.mjs@2',
     root: ROOT,
   }
 
