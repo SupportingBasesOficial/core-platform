@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "generated_at": "2026-04-09T17:32:32.924Z",
+    "generated_at": "2026-04-09T17:58:12.599Z",
     "repository": "SupportingBasesOficial/core-platform",
     "branch": "main",
-    "commit_sha": "e84db7b074e4a4bb438fb66cde7865d07cef280f",
-    "generator": "scripts/generate-repo-manifest.mjs@1",
+    "commit_sha": "5db18c6d510faef1b955e8ae884a3f683b665854",
+    "generator": "scripts/generate-repo-manifest.mjs@2",
     "root": "/home/runner/work/core-platform/core-platform"
   },
   "contracts": {
@@ -29,32 +29,42 @@
           {
             "name": "id",
             "data_type": "uuid",
-            "nullable": true,
+            "nullable": false,
+            "primary_key": true,
+            "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
           },
           {
             "name": "name",
             "data_type": "text",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "name text not null"
           },
           {
             "name": "created_at",
             "data_type": "timestamptz",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "now()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
           }
         ],
         "table_constraints": [],
+        "like_clauses": [],
         "source_path": "supabase/migrations/0001_core_platform_base.sql",
         "literal_sql_header": "create table if not exists organizations (\n  id uuid primary key default gen_random_uuid(),\n  name text not null,\n  created_at timestamptz not null default now()\n);"
       },
@@ -67,7 +77,9 @@
           {
             "name": "id",
             "data_type": "uuid",
-            "nullable": true,
+            "nullable": false,
+            "primary_key": true,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": {
@@ -77,37 +89,48 @@
               "name": "users",
               "column": "id"
             },
+            "check_expression": null,
             "literal_sql": "id uuid primary key references auth.users(id) on delete cascade"
           },
           {
             "name": "email",
             "data_type": "text",
             "nullable": true,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "email text"
           },
           {
             "name": "full_name",
             "data_type": "text",
             "nullable": true,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "full_name text"
           },
           {
             "name": "created_at",
             "data_type": "timestamptz",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "now()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
           }
         ],
         "table_constraints": [],
+        "like_clauses": [],
         "source_path": "supabase/migrations/0001_core_platform_base.sql",
         "literal_sql_header": "create table if not exists profiles (\n  id uuid primary key references auth.users(id) on delete cascade,\n  email text,\n  full_name text,\n  created_at timestamptz not null default now()\n);"
       },
@@ -120,16 +143,21 @@
           {
             "name": "id",
             "data_type": "uuid",
-            "nullable": true,
+            "nullable": false,
+            "primary_key": true,
+            "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
           },
           {
             "name": "user_id",
             "data_type": "uuid",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": {
@@ -139,12 +167,15 @@
               "name": "profiles",
               "column": "id"
             },
+            "check_expression": null,
             "literal_sql": "user_id uuid not null references profiles(id) on delete cascade"
           },
           {
             "name": "organization_id",
             "data_type": "uuid",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": {
@@ -154,28 +185,36 @@
               "name": "organizations",
               "column": "id"
             },
+            "check_expression": null,
             "literal_sql": "organization_id uuid not null references organizations(id) on delete cascade"
           },
           {
             "name": "role",
             "data_type": "text",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "role text not null"
           },
           {
             "name": "created_at",
             "data_type": "timestamptz",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "now()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
           }
         ],
         "table_constraints": [],
+        "like_clauses": [],
         "source_path": "supabase/migrations/0001_core_platform_base.sql",
         "literal_sql_header": "create table if not exists memberships (\n  id uuid primary key default gen_random_uuid(),\n  user_id uuid not null references profiles(id) on delete cascade,\n  organization_id uuid not null references organizations(id) on delete cascade,\n  role text not null,\n  created_at timestamptz not null default"
       },
@@ -188,41 +227,54 @@
           {
             "name": "id",
             "data_type": "uuid",
-            "nullable": true,
+            "nullable": false,
+            "primary_key": true,
+            "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
           },
           {
             "name": "role",
             "data_type": "text",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "role text not null"
           },
           {
             "name": "permission",
             "data_type": "text",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "permission text not null"
           },
           {
             "name": "created_at",
             "data_type": "timestamptz",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "now()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
           }
         ],
         "table_constraints": [],
+        "like_clauses": [],
         "source_path": "supabase/migrations/0001_core_platform_base.sql",
         "literal_sql_header": "create table if not exists role_permissions (\n  id uuid primary key default gen_random_uuid(),\n  role text not null,\n  permission text not null,\n  created_at timestamptz not null default now()\n);"
       },
@@ -235,16 +287,21 @@
           {
             "name": "id",
             "data_type": "uuid",
-            "nullable": true,
+            "nullable": false,
+            "primary_key": true,
+            "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
           },
           {
             "name": "organization_id",
             "data_type": "uuid",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": {
@@ -254,28 +311,36 @@
               "name": "organizations",
               "column": "id"
             },
+            "check_expression": null,
             "literal_sql": "organization_id uuid not null references organizations(id) on delete cascade"
           },
           {
             "name": "total",
             "data_type": "numeric",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "total numeric not null"
           },
           {
             "name": "created_at",
             "data_type": "timestamptz",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "now()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
           }
         ],
         "table_constraints": [],
+        "like_clauses": [],
         "source_path": "supabase/migrations/0001_core_platform_base.sql",
         "literal_sql_header": "create table if not exists sales (\n  id uuid primary key default gen_random_uuid(),\n  organization_id uuid not null references organizations(id) on delete cascade,\n  total numeric not null,\n  created_at timestamptz not null default now()\n);"
       },
@@ -288,34 +353,45 @@
           {
             "name": "id",
             "data_type": "uuid",
-            "nullable": true,
+            "nullable": false,
+            "primary_key": true,
+            "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
           },
           {
             "name": "type",
             "data_type": "text",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "type text not null"
           },
           {
             "name": "payload",
             "data_type": "jsonb",
             "nullable": true,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "payload jsonb"
           },
           {
             "name": "organization_id",
             "data_type": "uuid",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": {
@@ -325,37 +401,48 @@
               "name": "organizations",
               "column": "id"
             },
+            "check_expression": null,
             "literal_sql": "organization_id uuid not null references organizations(id) on delete cascade"
           },
           {
             "name": "status",
             "data_type": "text",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "'pending'",
             "references": null,
+            "check_expression": null,
             "literal_sql": "status text not null default 'pending'"
           },
           {
             "name": "attempts",
             "data_type": "integer",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "0",
             "references": null,
+            "check_expression": null,
             "literal_sql": "attempts integer not null default 0"
           },
           {
             "name": "created_at",
             "data_type": "timestamptz",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "now()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
           }
         ],
         "table_constraints": [],
+        "like_clauses": [],
         "source_path": "supabase/migrations/0001_core_platform_base.sql",
         "literal_sql_header": "create table if not exists events (\n  id uuid primary key default gen_random_uuid(),\n  type text not null,\n  payload jsonb,\n  organization_id uuid not null references organizations(id) on delete cascade,\n  status text not null default 'pending',\n  attempts integer not null default 0,\n  created_at ti"
       },
@@ -368,16 +455,21 @@
           {
             "name": "id",
             "data_type": "uuid",
-            "nullable": true,
+            "nullable": false,
+            "primary_key": true,
+            "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
           },
           {
             "name": "user_id",
             "data_type": "uuid",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": {
@@ -387,37 +479,48 @@
               "name": "profiles",
               "column": "id"
             },
+            "check_expression": null,
             "literal_sql": "user_id uuid not null references profiles(id) on delete cascade"
           },
           {
             "name": "action",
             "data_type": "text",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "action text not null"
           },
           {
             "name": "metadata",
             "data_type": "jsonb",
             "nullable": true,
+            "primary_key": false,
+            "unique": false,
             "has_default": false,
             "default_value": null,
             "references": null,
+            "check_expression": null,
             "literal_sql": "metadata jsonb"
           },
           {
             "name": "created_at",
             "data_type": "timestamptz",
             "nullable": false,
+            "primary_key": false,
+            "unique": false,
             "has_default": true,
             "default_value": "now()",
             "references": null,
+            "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
           }
         ],
         "table_constraints": [],
+        "like_clauses": [],
         "source_path": "supabase/migrations/0001_core_platform_base.sql",
         "literal_sql_header": "create table if not exists audit_logs (\n  id uuid primary key default gen_random_uuid(),\n  user_id uuid not null references profiles(id) on delete cascade,\n  action text not null,\n  metadata jsonb,\n  created_at timestamptz not null default now()\n);"
       },
@@ -426,18 +529,20 @@
         "qualified_name": "dead_events",
         "schema": null,
         "name": "dead_events",
-        "columns": [
+        "columns": [],
+        "table_constraints": [],
+        "like_clauses": [
           {
-            "name": "like",
-            "data_type": "events including all",
-            "nullable": true,
-            "has_default": false,
-            "default_value": null,
-            "references": null,
+            "source_table": {
+              "raw": "events",
+              "qualified_name": "events",
+              "schema": null,
+              "name": "events"
+            },
+            "options_literal": "including all",
             "literal_sql": "like events including all"
           }
         ],
-        "table_constraints": [],
         "source_path": "supabase/migrations/20260402010354_dead_events_table.sql",
         "literal_sql_header": "create table if not exists dead_events (\n  like events including all\n);"
       }
@@ -649,7 +754,7 @@
           "name": "create_sale_with_event"
         },
         "arguments_literal": "p_total numeric,\n  p_organization_id uuid",
-        "returns_literal": "json language plpgsql security invoker as",
+        "returns_literal": "json",
         "language": "plpgsql",
         "security": "invoker",
         "source_path": "supabase/migrations/0002_sales_transaction_rpc.sql",
@@ -663,7 +768,7 @@
           "name": "create_sale_with_event"
         },
         "arguments_literal": "p_total numeric,\n  p_organization_id uuid,\n  p_idempotency_key text",
-        "returns_literal": "json language plpgsql security invoker as",
+        "returns_literal": "json",
         "language": "plpgsql",
         "security": "invoker",
         "source_path": "supabase/migrations/20260401231854_sales_transaction_rpc_idempotent.sql",
@@ -677,7 +782,7 @@
           "name": "lock_events"
         },
         "arguments_literal": "limit_count integer default 10",
-        "returns_literal": "setof events language sql security invoker as",
+        "returns_literal": "setof events",
         "language": "sql",
         "security": "invoker",
         "source_path": "supabase/migrations/20260402003302_lock_events_function.sql",

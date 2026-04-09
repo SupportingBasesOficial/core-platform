@@ -4,15 +4,15 @@ Gerado automaticamente a partir da realidade do repositório.
 
 ## Metadados
 
-- generated_at: `2026-04-09T17:32:32.924Z`
+- generated_at: `2026-04-09T17:58:12.599Z`
 - repository: `SupportingBasesOficial/core-platform`
 - branch: `main`
-- commit_sha: `e84db7b074e4a4bb438fb66cde7865d07cef280f`
-- generator: `scripts/generate-repo-manifest.mjs@1`
+- commit_sha: `5db18c6d510faef1b955e8ae884a3f683b665854`
+- generator: `scripts/generate-repo-manifest.mjs@2`
 
 ## Contagem estrutural
 
-- directories: 37
+- directories: 38
 - files: 59
 
 ## Contagem por camada
