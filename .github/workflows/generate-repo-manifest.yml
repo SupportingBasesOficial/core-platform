@@ -2,6 +2,11 @@ name: Generate Repo Reality Manifest v3
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/repo/**'
 
 permissions:
   contents: write
