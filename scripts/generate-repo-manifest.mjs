@@ -10,7 +10,10 @@ const OUTPUT_FILES = [
   `${OUTPUT_DIR}/REPO_TREE.json`,
   `${OUTPUT_DIR}/REPO_FILES.json`,
   `${OUTPUT_DIR}/REPO_CONTRACTS.json`,
+  `${OUTPUT_DIR}/REPO_EFFECTIVE_CONTRACTS.json`,
   `${OUTPUT_DIR}/REPO_RUNTIME.json`,
+  `${OUTPUT_DIR}/REPO_TRUTH_BOUNDARY.json`,
+  `${OUTPUT_DIR}/DB_RUNTIME_STATE.json`,
   `${OUTPUT_DIR}/REPO_INDEX.md`,
 ]
 
@@ -50,6 +53,7 @@ const TEXT_EXTENSIONS = new Set([
   '.css',
   '.scss',
   '.html',
+  '.toml',
 ])
 
 const MAX_TEXT_BYTES = 1_500_000
@@ -72,21 +76,16 @@ function isOutputFile(relativePath) {
 
 function fileExtension(relativePath) {
   const ext = path.extname(relativePath)
-  if (ext) {
-    return ext
-  }
+  if (ext) return ext
 
   const base = path.basename(relativePath)
-  if (base.startsWith('.')) {
-    return base
-  }
+  if (base.startsWith('.')) return base
 
   return ''
 }
 
 function isTextLike(relativePath) {
-  const ext = fileExtension(relativePath)
-  return TEXT_EXTENSIONS.has(ext)
+  return TEXT_EXTENSIONS.has(fileExtension(relativePath))
 }
 
 function detectLayer(relativePath) {
@@ -166,17 +165,12 @@ function detectRoute(relativePath) {
 function detectDomainPath(relativePath) {
   const normalized = toPosix(relativePath)
 
-  if (!normalized.startsWith('src/domains/')) {
-    return null
-  }
+  if (!normalized.startsWith('src/domains/')) return null
 
   const rest = normalized.replace(/^src\/domains\//, '')
   const parts = rest.split('/')
 
-  if (parts.length <= 1) {
-    return parts[0] || null
-  }
-
+  if (parts.length <= 1) return parts[0] || null
   return parts.slice(0, parts.length - 1).join('/')
 }
 
@@ -189,9 +183,7 @@ function extractImports(text) {
   ]
 
   for (const pattern of patterns) {
-    for (const match of text.matchAll(pattern)) {
-      imports.add(match[1])
-    }
+    for (const match of text.matchAll(pattern)) imports.add(match[1])
   }
 
   return [...imports].sort()
@@ -200,40 +192,19 @@ function extractImports(text) {
 function extractExports(text) {
   const exports = new Set()
 
-  for (const match of text.matchAll(/export\s+(?:async\s+)?function\s+([A-Za-z0-9_]+)/g)) {
-    exports.add(match[1])
-  }
-
-  for (const match of text.matchAll(/export\s+const\s+([A-Za-z0-9_]+)/g)) {
-    exports.add(match[1])
-  }
-
-  for (const match of text.matchAll(/export\s+class\s+([A-Za-z0-9_]+)/g)) {
-    exports.add(match[1])
-  }
-
-  for (const match of text.matchAll(/export\s+type\s+([A-Za-z0-9_]+)/g)) {
-    exports.add(match[1])
-  }
-
-  for (const match of text.matchAll(/export\s+interface\s+([A-Za-z0-9_]+)/g)) {
-    exports.add(match[1])
-  }
-
-  if (/export\s+default\b/g.test(text)) {
-    exports.add('default')
-  }
+  for (const match of text.matchAll(/export\s+(?:async\s+)?function\s+([A-Za-z0-9_]+)/g)) exports.add(match[1])
+  for (const match of text.matchAll(/export\s+const\s+([A-Za-z0-9_]+)/g)) exports.add(match[1])
+  for (const match of text.matchAll(/export\s+class\s+([A-Za-z0-9_]+)/g)) exports.add(match[1])
+  for (const match of text.matchAll(/export\s+type\s+([A-Za-z0-9_]+)/g)) exports.add(match[1])
+  for (const match of text.matchAll(/export\s+interface\s+([A-Za-z0-9_]+)/g)) exports.add(match[1])
+  if (/export\s+default\b/g.test(text)) exports.add('default')
 
   return [...exports].sort()
 }
 
 function extractEnvRefs(text) {
   const refs = new Set()
-
-  for (const match of text.matchAll(/process\.env\.([A-Z0-9_]+)/g)) {
-    refs.add(match[1])
-  }
-
+  for (const match of text.matchAll(/process\.env\.([A-Z0-9_]+)/g)) refs.add(match[1])
   return [...refs].sort()
 }
 
@@ -275,9 +246,7 @@ function splitSqlTopLevel(input) {
 
       if (char === ',' && depth === 0) {
         const trimmed = current.trim()
-        if (trimmed) {
-          parts.push(trimmed)
-        }
+        if (trimmed) parts.push(trimmed)
         current = ''
         continue
       }
@@ -287,10 +256,7 @@ function splitSqlTopLevel(input) {
   }
 
   const tail = current.trim()
-  if (tail) {
-    parts.push(tail)
-  }
-
+  if (tail) parts.push(tail)
   return parts
 }
 
@@ -299,41 +265,41 @@ function normalizeSqlName(rawName) {
   const parts = clean.split('.').filter(Boolean)
 
   if (parts.length === 1) {
-    return {
-      raw: rawName.trim(),
-      qualified_name: clean,
-      schema: null,
-      name: parts[0],
-    }
+    return { raw: rawName.trim(), qualified_name: clean, schema: null, name: parts[0] }
   }
 
+  return { raw: rawName.trim(), qualified_name: clean, schema: parts[0], name: parts[1] }
+}
+
+function parseLikeClause(definition) {
+  const trimmed = definition.trim()
+  const match = trimmed.match(/^like\s+([A-Za-z0-9_."-]+)(?:\s+(.*))?$/i)
+
+  if (!match) return null
+
   return {
-    raw: rawName.trim(),
-    qualified_name: clean,
-    schema: parts[0],
-    name: parts[1],
+    source_table: normalizeSqlName(match[1]),
+    options_literal: match[2]?.trim() ?? null,
+    literal_sql: trimmed,
   }
 }
 
 function parseColumnDefinition(definition) {
   const trimmed = definition.trim()
 
-  if (/^(constraint|primary key|foreign key|unique|check|like)\b/i.test(trimmed)) {
-    return null
-  }
+  if (/^(constraint|primary key|foreign key|unique|check|like)\b/i.test(trimmed)) return null
 
   const match = trimmed.match(
-    /^"?(?<name>[A-Za-z_][A-Za-z0-9_]*)"?\s+(?<type>[A-Za-z0-9_.\s\[\]]+?)(?=\s+(?:not null|null|default|check|references|constraint|primary key|unique)\b|$)/i,
+    /^"?(?<name>[A-Za-z_][A-Za-z0-9_]*)"?\s+(?<type>[A-Za-z0-9_.\s\[\],()]+?)(?=\s+(?:not null|null|default|generated|check|references|constraint|primary key|unique)\b|$)/i,
   )
 
-  if (!match?.groups?.name || !match.groups.type) {
-    return null
-  }
+  if (!match?.groups?.name || !match.groups.type) return null
 
   const refMatch = trimmed.match(/\breferences\s+([A-Za-z0-9_."-]+)\s*\(([^)]+)\)/i)
   const defaultMatch = trimmed.match(
-    /\bdefault\s+(.+?)(?=\s+(?:check|references|constraint|primary key|unique|not null|null)\b|$)/i,
+    /\bdefault\s+(.+?)(?=\s+(?:generated|check|references|constraint|primary key|unique|not null|null)\b|$)/i,
   )
+  const generatedMatch = trimmed.match(/\bgenerated\s+always\s+as\s*\(([\s\S]+)\)\s+stored/i)
   const isPrimaryKey = /\bprimary key\b/i.test(trimmed)
   const isUnique = /\bunique\b/i.test(trimmed)
   const checkMatch = trimmed.match(/\bcheck\s*\((.+)\)$/i)
@@ -346,11 +312,10 @@ function parseColumnDefinition(definition) {
     unique: isUnique,
     has_default: Boolean(defaultMatch),
     default_value: defaultMatch ? defaultMatch[1].trim() : null,
+    generated_always: Boolean(generatedMatch),
+    generated_expression: generatedMatch ? generatedMatch[1].trim() : null,
     references: refMatch
-      ? {
-          ...normalizeSqlName(refMatch[1]),
-          column: refMatch[2].replace(/"/g, '').trim(),
-        }
+      ? { ...normalizeSqlName(refMatch[1]), column: refMatch[2].replace(/"/g, '').trim() }
       : null,
     check_expression: checkMatch ? checkMatch[1].trim() : null,
     literal_sql: trimmed,
@@ -416,14 +381,15 @@ function parseTableConstraint(definition) {
     }
   }
 
-  if (/^like\s+/i.test(body)) {
+  const likeClause = parseLikeClause(body)
+  if (likeClause) {
     return {
       constraint_type: 'like_clause',
       constraint_name: constraintName,
       columns_literal: null,
       references: null,
       check_expression: null,
-      like_clause: parseLikeClause(body),
+      like_clause: likeClause,
       literal_sql: trimmed,
     }
   }
@@ -434,21 +400,6 @@ function parseTableConstraint(definition) {
     columns_literal: null,
     references: null,
     check_expression: null,
-    literal_sql: trimmed,
-  }
-}
-
-function parseLikeClause(definition) {
-  const trimmed = definition.trim()
-  const match = trimmed.match(/^like\s+([A-Za-z0-9_."-]+)(?:\s+(.*))?$/i)
-
-  if (!match) {
-    return null
-  }
-
-  return {
-    source_table: normalizeSqlName(match[1]),
-    options_literal: match[2]?.trim() ?? null,
     literal_sql: trimmed,
   }
 }
@@ -656,38 +607,20 @@ function makeDirNode(relativePath) {
 }
 
 function buildTree(nodes) {
-  const root = {
-    name: '.',
-    path: '.',
-    node_type: 'directory',
-    children: [],
-  }
-
+  const root = { name: '.', path: '.', node_type: 'directory', children: [] }
   const index = new Map()
   index.set('.', root)
 
   const sorted = [...nodes].sort((a, b) => a.path.localeCompare(b.path))
 
   for (const node of sorted) {
-    if (node.path === '.') {
-      continue
-    }
+    if (node.path === '.') continue
 
-    const parentPath = node.path.includes('/')
-      ? node.path.slice(0, node.path.lastIndexOf('/'))
-      : '.'
-
+    const parentPath = node.path.includes('/') ? node.path.slice(0, node.path.lastIndexOf('/')) : '.'
     const parent = index.get(parentPath)
+    if (!parent) continue
 
-    if (!parent) {
-      continue
-    }
-
-    const slimNode = {
-      name: node.name,
-      path: node.path,
-      node_type: node.node_type,
-    }
+    const slimNode = { name: node.name, path: node.path, node_type: node.node_type }
 
     if (node.node_type === 'file') {
       slimNode.kind = node.kind
@@ -698,18 +631,14 @@ function buildTree(nodes) {
 
     parent.children.push(slimNode)
 
-    if (node.node_type === 'directory') {
-      index.set(node.path, slimNode)
-    }
+    if (node.node_type === 'directory') index.set(node.path, slimNode)
   }
 
   return root
 }
 
 async function readMaybeText(absPath, relativePath, size, warnings) {
-  if (!isTextLike(relativePath)) {
-    return null
-  }
+  if (!isTextLike(relativePath)) return null
 
   if (size > MAX_TEXT_BYTES) {
     warnings.push({
@@ -723,10 +652,7 @@ async function readMaybeText(absPath, relativePath, size, warnings) {
   try {
     return await fs.readFile(absPath, 'utf8')
   } catch {
-    warnings.push({
-      path: relativePath,
-      code: 'TEXT_ANALYSIS_FAILED_TO_READ_UTF8',
-    })
+    warnings.push({ path: relativePath, code: 'TEXT_ANALYSIS_FAILED_TO_READ_UTF8' })
     return null
   }
 }
@@ -737,19 +663,11 @@ async function walk(relativeDir, directoryNodes, fileRecords, runtime, contracts
   entries.sort((a, b) => a.name.localeCompare(b.name))
 
   for (const entry of entries) {
-    if (IGNORED_FILES.has(entry.name)) {
-      continue
-    }
-
-    if (entry.isDirectory() && IGNORED_DIRS.has(entry.name)) {
-      continue
-    }
+    if (IGNORED_FILES.has(entry.name)) continue
+    if (entry.isDirectory() && IGNORED_DIRS.has(entry.name)) continue
 
     const relativePath = relativeDir ? toPosix(path.join(relativeDir, entry.name)) : entry.name
-
-    if (isOutputFile(relativePath)) {
-      continue
-    }
+    if (isOutputFile(relativePath)) continue
 
     const absPath = path.join(ROOT, relativePath)
 
@@ -759,9 +677,7 @@ async function walk(relativeDir, directoryNodes, fileRecords, runtime, contracts
       continue
     }
 
-    if (!entry.isFile()) {
-      continue
-    }
+    if (!entry.isFile()) continue
 
     const stat = await fs.stat(absPath)
     const buffer = await fs.readFile(absPath)
@@ -794,39 +710,18 @@ async function walk(relativeDir, directoryNodes, fileRecords, runtime, contracts
       record.imports = extractImports(text)
       record.exports = extractExports(text)
 
-      for (const envRef of record.env_refs) {
-        runtime.env_references.add(envRef)
-      }
-
-      if (relativePath.startsWith('.github/workflows/')) {
-        runtime.workflows.push(relativePath)
-      }
+      for (const envRef of record.env_refs) runtime.env_references.add(envRef)
+      if (relativePath.startsWith('.github/workflows/')) runtime.workflows.push(relativePath)
 
       if (relativePath === 'package.json') {
-        try {
-          runtime.package_json = JSON.parse(text)
-        } catch {
-          warnings.push({
-            path: relativePath,
-            code: 'PACKAGE_JSON_PARSE_FAILED',
-          })
-        }
+        try { runtime.package_json = JSON.parse(text) } catch { warnings.push({ path: relativePath, code: 'PACKAGE_JSON_PARSE_FAILED' }) }
       }
 
       if (relativePath === 'tsconfig.json') {
-        try {
-          runtime.tsconfig_json = JSON.parse(text)
-        } catch {
-          warnings.push({
-            path: relativePath,
-            code: 'TSCONFIG_PARSE_FAILED',
-          })
-        }
+        try { runtime.tsconfig_json = JSON.parse(text) } catch { warnings.push({ path: relativePath, code: 'TSCONFIG_PARSE_FAILED' }) }
       }
 
-      if (relativePath === '.nvmrc') {
-        runtime.nvmrc = text.trim() || null
-      }
+      if (relativePath === '.nvmrc') runtime.nvmrc = text.trim() || null
 
       if (relativePath.startsWith('supabase/migrations/') && relativePath.endsWith('.sql')) {
         const parsed = parseSqlContracts(text, relativePath)
@@ -848,13 +743,138 @@ async function walk(relativeDir, directoryNodes, fileRecords, runtime, contracts
 
 function countBy(items, key) {
   const map = new Map()
-
   for (const item of items) {
     const value = item[key] ?? 'null'
     map.set(value, (map.get(value) ?? 0) + 1)
   }
-
   return Object.fromEntries([...map.entries()].sort((a, b) => a[0].localeCompare(b[0])))
+}
+
+function dedupeLatest(items, keyFn) {
+  const map = new Map()
+  const history = new Map()
+
+  for (const item of items) {
+    const key = keyFn(item)
+    if (!history.has(key)) history.set(key, [])
+    history.get(key).push(item)
+    map.set(key, item)
+  }
+
+  return {
+    latest: [...map.entries()].map(([key, value]) => ({
+      key,
+      source_path: value.source_path ?? null,
+      value,
+      override_count: (history.get(key)?.length ?? 1) - 1,
+      history_source_paths: (history.get(key) ?? []).map((entry) => entry.source_path ?? null),
+    })),
+    duplicates: [...history.entries()]
+      .filter(([, values]) => values.length > 1)
+      .map(([key, values]) => ({
+        key,
+        occurrences: values.map((value) => ({ source_path: value.source_path ?? null })),
+      })),
+  }
+}
+
+function buildEffectiveContracts(contracts) {
+  const functions = dedupeLatest(contracts.functions, (item) => item.name?.qualified_name ?? 'unknown_function')
+  const policies = dedupeLatest(
+    contracts.policies,
+    (item) => `${item.table?.qualified_name ?? 'unknown_table'}::${item.command ?? 'unknown_command'}::${item.name ?? 'unknown_policy'}`
+  )
+  const indexes = dedupeLatest(
+    contracts.indexes,
+    (item) => `${item.table?.qualified_name ?? 'unknown_table'}::${item.name ?? 'unknown_index'}`
+  )
+  const rlsEnabledTables = dedupeLatest(
+    contracts.rls_enabled_tables,
+    (item) => item.table?.qualified_name ?? 'unknown_table'
+  )
+  const tables = dedupeLatest(contracts.tables, (item) => item.qualified_name ?? 'unknown_table')
+
+  return {
+    summary: {
+      effective_tables: tables.latest.length,
+      effective_indexes: indexes.latest.length,
+      effective_policies: policies.latest.length,
+      effective_functions: functions.latest.length,
+      effective_rls_enabled_tables: rlsEnabledTables.latest.length,
+      duplicate_tables: tables.duplicates.length,
+      duplicate_indexes: indexes.duplicates.length,
+      duplicate_policies: policies.duplicates.length,
+      duplicate_functions: functions.duplicates.length,
+    },
+    effective: {
+      tables: tables.latest,
+      indexes: indexes.latest,
+      policies: policies.latest,
+      functions: functions.latest,
+      rls_enabled_tables: rlsEnabledTables.latest,
+    },
+    duplicates: {
+      tables: tables.duplicates,
+      indexes: indexes.duplicates,
+      policies: policies.duplicates,
+      functions: functions.duplicates,
+    },
+  }
+}
+
+function buildTruthBoundary(metadata) {
+  return {
+    metadata,
+    truth_boundary: {
+      repo_files: {
+        verified: true,
+        source: 'repository filesystem at workflow runtime',
+      },
+      migrations_local: {
+        verified: true,
+        source: 'supabase/migrations/*.sql in repository',
+      },
+      remote_database_runtime: {
+        verified: false,
+        source: null,
+        reason: 'requires explicit remote connection and credentials',
+      },
+      applied_migrations_remote: {
+        verified: false,
+        source: null,
+        reason: 'requires explicit remote connection and credentials',
+      },
+      remote_functions_policies_rls: {
+        verified: false,
+        source: null,
+        reason: 'requires explicit remote connection and credentials',
+      },
+    },
+    guidance: [
+      'REPO_CONTRACTS.json reflects repository contracts found in code and migrations.',
+      'REPO_EFFECTIVE_CONTRACTS.json reflects latest effective repository definitions by key within repository history.',
+      'DB_RUNTIME_STATE.json remains unavailable until explicit remote database access is configured.',
+    ],
+  }
+}
+
+function buildDbRuntimeState(metadata) {
+  return {
+    metadata,
+    status: 'unavailable_without_remote_connection',
+    verified: false,
+    required_inputs: [
+      'database connection or Supabase management credentials',
+      'explicit workflow secrets for remote verification',
+    ],
+    checks_not_performed: [
+      'applied migration history on remote database',
+      'remote functions/RPCs inventory',
+      'remote policies inventory',
+      'remote RLS enablement state',
+      'drift between repository and remote database',
+    ],
+  }
 }
 
 async function writeJson(relativePath, payload) {
@@ -874,8 +894,10 @@ function buildIndexMarkdown(context) {
     metadata,
     directoryNodes,
     fileRecords,
-    contracts,
+    contractsManifest,
+    effectiveContractsManifest,
     runtimeManifest,
+    truthBoundaryManifest,
     filesManifest,
   } = context
 
@@ -907,32 +929,41 @@ Gerado automaticamente a partir da realidade do repositório.
 
 ## Contagem por camada
 
-${Object.entries(filesManifest.summary.files_by_layer)
-  .map(([key, value]) => `- ${key}: ${value}`)
-  .join('\n')}
+${Object.entries(filesManifest.summary.files_by_layer).map(([key, value]) => `- ${key}: ${value}`).join('\n')}
 
 ## Contagem por kind
 
-${Object.entries(filesManifest.summary.files_by_kind)
-  .map(([key, value]) => `- ${key}: ${value}`)
-  .join('\n')}
+${Object.entries(filesManifest.summary.files_by_kind).map(([key, value]) => `- ${key}: ${value}`).join('\n')}
 
 ## Contratos SQL detectados
 
-- tables: ${contracts.tables.length}
-- indexes: ${contracts.indexes.length}
-- policies: ${contracts.policies.length}
-- functions: ${contracts.functions.length}
-- views: ${contracts.views.length}
-- triggers: ${contracts.triggers.length}
-- enums: ${contracts.enums.length}
-- rls_enabled_tables: ${contracts.rls_enabled_tables.length}
+- tables: ${contractsManifest.contracts.tables.length}
+- indexes: ${contractsManifest.contracts.indexes.length}
+- policies: ${contractsManifest.contracts.policies.length}
+- functions: ${contractsManifest.contracts.functions.length}
+- views: ${contractsManifest.contracts.views.length}
+- triggers: ${contractsManifest.contracts.triggers.length}
+- enums: ${contractsManifest.contracts.enums.length}
+- rls_enabled_tables: ${contractsManifest.contracts.rls_enabled_tables.length}
+
+## Contratos efetivos
+
+- effective_tables: ${effectiveContractsManifest.summary.effective_tables}
+- effective_indexes: ${effectiveContractsManifest.summary.effective_indexes}
+- effective_policies: ${effectiveContractsManifest.summary.effective_policies}
+- effective_functions: ${effectiveContractsManifest.summary.effective_functions}
+- duplicate_functions: ${effectiveContractsManifest.summary.duplicate_functions}
 
 ## Runtime detectado
 
 - env_references: ${runtimeManifest.runtime.env_references.length}
 - workflows: ${runtimeManifest.runtime.workflows.length}
 - nvmrc: ${runtimeManifest.runtime.nvmrc ?? 'null'}
+
+## Fronteira de verdade
+
+- repo_files_verified: ${truthBoundaryManifest.truth_boundary.repo_files.verified}
+- remote_database_runtime_verified: ${truthBoundaryManifest.truth_boundary.remote_database_runtime.verified}
 
 ## Rotas detectadas
 
@@ -947,7 +978,10 @@ ${workflows || '- nenhum workflow detectado'}
 - \`docs/repo/REPO_TREE.json\`
 - \`docs/repo/REPO_FILES.json\`
 - \`docs/repo/REPO_CONTRACTS.json\`
+- \`docs/repo/REPO_EFFECTIVE_CONTRACTS.json\`
 - \`docs/repo/REPO_RUNTIME.json\`
+- \`docs/repo/REPO_TRUTH_BOUNDARY.json\`
+- \`docs/repo/DB_RUNTIME_STATE.json\`
 - \`docs/repo/REPO_INDEX.md\`
 
 ## Observações
@@ -964,7 +998,7 @@ async function main() {
     repository: process.env.GITHUB_REPOSITORY ?? null,
     branch: process.env.GITHUB_REF_NAME ?? null,
     commit_sha: process.env.GITHUB_SHA ?? null,
-    generator: 'scripts/generate-repo-manifest.mjs@2',
+    generator: 'scripts/generate-repo-manifest-v3.mjs@3',
     root: ROOT,
   }
 
@@ -1035,6 +1069,15 @@ async function main() {
     warnings,
   }
 
+  const effectiveContractsManifest = {
+    metadata,
+    ...buildEffectiveContracts(contractsManifest.contracts),
+    warnings,
+  }
+
+  const truthBoundaryManifest = buildTruthBoundary(metadata)
+  const dbRuntimeStateManifest = buildDbRuntimeState(metadata)
+
   const treeNodes = [
     ...filesManifest.directories.map((dir) => ({
       path: dir.path,
@@ -1051,25 +1094,26 @@ async function main() {
     })),
   ]
 
-  const treeManifest = {
-    metadata,
-    tree: buildTree(treeNodes),
-    warnings,
-  }
+  const treeManifest = { metadata, tree: buildTree(treeNodes), warnings }
 
   const indexMarkdown = buildIndexMarkdown({
     metadata,
     directoryNodes: filesManifest.directories,
     fileRecords: filesManifest.files,
-    contracts: contractsManifest.contracts,
+    contractsManifest,
+    effectiveContractsManifest,
     runtimeManifest,
+    truthBoundaryManifest,
     filesManifest,
   })
 
   await writeJson(`${OUTPUT_DIR}/REPO_TREE.json`, treeManifest)
   await writeJson(`${OUTPUT_DIR}/REPO_FILES.json`, filesManifest)
   await writeJson(`${OUTPUT_DIR}/REPO_CONTRACTS.json`, contractsManifest)
+  await writeJson(`${OUTPUT_DIR}/REPO_EFFECTIVE_CONTRACTS.json`, effectiveContractsManifest)
   await writeJson(`${OUTPUT_DIR}/REPO_RUNTIME.json`, runtimeManifest)
+  await writeJson(`${OUTPUT_DIR}/REPO_TRUTH_BOUNDARY.json`, truthBoundaryManifest)
+  await writeJson(`${OUTPUT_DIR}/DB_RUNTIME_STATE.json`, dbRuntimeStateManifest)
   await writeText(`${OUTPUT_DIR}/REPO_INDEX.md`, indexMarkdown)
 
   console.log(

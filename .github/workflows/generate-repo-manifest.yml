@@ -1,18 +1,13 @@
-name: Generate Repo Reality Manifest
+name: Generate Repo Reality Manifest v3
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'docs/repo/**'
 
 permissions:
   contents: write
 
 jobs:
-  generate-repo-manifest:
+  generate-repo-manifest-v3:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +21,7 @@ jobs:
         with:
           node-version: 24
 
-      - name: Generate repo manifest
+      - name: Generate repo manifest v3
         run: node scripts/generate-repo-manifest.mjs
 
       - name: Stage manifest files
@@ -41,5 +36,5 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: refresh repo reality manifest"
+          git commit -m "chore: refresh repo reality manifest v3"
           git push
