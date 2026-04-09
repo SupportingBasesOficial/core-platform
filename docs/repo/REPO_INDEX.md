@@ -4,11 +4,11 @@ Gerado automaticamente a partir da realidade do repositório.
 
 ## Metadados
 
-- generated_at: `2026-04-09T17:58:12.599Z`
+- generated_at: `2026-04-09T19:24:58.811Z`
 - repository: `SupportingBasesOficial/core-platform`
 - branch: `main`
-- commit_sha: `5db18c6d510faef1b955e8ae884a3f683b665854`
-- generator: `scripts/generate-repo-manifest.mjs@2`
+- commit_sha: `2717a8fd090739ab742d8c0e5d916622436a6a21`
+- generator: `scripts/generate-repo-manifest-v3.mjs@3`
 
 ## Contagem estrutural
 
@@ -55,11 +55,24 @@ Gerado automaticamente a partir da realidade do repositório.
 - enums: 0
 - rls_enabled_tables: 6
 
+## Contratos efetivos
+
+- effective_tables: 8
+- effective_indexes: 2
+- effective_policies: 12
+- effective_functions: 3
+- duplicate_functions: 0
+
 ## Runtime detectado
 
 - env_references: 5
 - workflows: 1
 - nvmrc: 18.20.4
+
+## Fronteira de verdade
+
+- repo_files_verified: true
+- remote_database_runtime_verified: false
 
 ## Rotas detectadas
 
@@ -84,7 +97,10 @@ Gerado automaticamente a partir da realidade do repositório.
 - `docs/repo/REPO_TREE.json`
 - `docs/repo/REPO_FILES.json`
 - `docs/repo/REPO_CONTRACTS.json`
+- `docs/repo/REPO_EFFECTIVE_CONTRACTS.json`
 - `docs/repo/REPO_RUNTIME.json`
+- `docs/repo/REPO_TRUTH_BOUNDARY.json`
+- `docs/repo/DB_RUNTIME_STATE.json`
 - `docs/repo/REPO_INDEX.md`
 
 ## Observações
