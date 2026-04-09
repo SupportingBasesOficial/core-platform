@@ -1,0 +1,984 @@
+#!/usr/bin/env node
+import { promises as fs } from 'node:fs'
+import path from 'node:path'
+import crypto from 'node:crypto'
+
+const ROOT = process.cwd()
+const OUTPUT_DIR = 'docs/repo'
+
+const OUTPUT_FILES = [
+  `${OUTPUT_DIR}/REPO_TREE.json`,
+  `${OUTPUT_DIR}/REPO_FILES.json`,
+  `${OUTPUT_DIR}/REPO_CONTRACTS.json`,
+  `${OUTPUT_DIR}/REPO_RUNTIME.json`,
+  `${OUTPUT_DIR}/REPO_INDEX.md`,
+]
+
+const IGNORED_DIRS = new Set([
+  '.git',
+  'node_modules',
+  '.next',
+  '.vercel',
+  'dist',
+  'build',
+  'coverage',
+  '.turbo',
+  '.cache',
+  '.idea',
+  '.vscode',
+])
+
+const IGNORED_FILES = new Set([
+  '.DS_Store',
+])
+
+const TEXT_EXTENSIONS = new Set([
+  '.js',
+  '.jsx',
+  '.ts',
+  '.tsx',
+  '.mjs',
+  '.cjs',
+  '.json',
+  '.md',
+  '.sql',
+  '.yml',
+  '.yaml',
+  '.txt',
+  '.env',
+  '.gitignore',
+  '.nvmrc',
+  '.sh',
+  '.css',
+  '.scss',
+  '.html',
+])
+
+const MAX_TEXT_BYTES = 1_500_000
+
+function toPosix(value) {
+  return value.split(path.sep).join('/')
+}
+
+function nowIso() {
+  return new Date().toISOString()
+}
+
+function sha256(buffer) {
+  return crypto.createHash('sha256').update(buffer).digest('hex')
+}
+
+function isOutputFile(relativePath) {
+  return OUTPUT_FILES.includes(relativePath)
+}
+
+function fileExtension(relativePath) {
+  const ext = path.extname(relativePath)
+  if (ext) {
+    return ext
+  }
+
+  const base = path.basename(relativePath)
+  if (base.startsWith('.')) {
+    return base
+  }
+
+  return ''
+}
+
+function isTextLike(relativePath) {
+  const ext = fileExtension(relativePath)
+  return TEXT_EXTENSIONS.has(ext)
+}
+
+function detectLayer(relativePath) {
+  if (relativePath.startsWith('src/app/')) return 'app'
+  if (relativePath === 'src/middleware.ts' || relativePath === 'src/middleware.js') return 'app'
+  if (relativePath.startsWith('src/server/')) return 'server'
+  if (relativePath.startsWith('src/domains/')) return 'domains'
+  if (relativePath.startsWith('src/workers/')) return 'workers'
+  if (relativePath.startsWith('src/jobs/')) return 'jobs'
+  if (relativePath.startsWith('src/infra/')) return 'infra'
+  if (relativePath.startsWith('supabase/migrations/')) return 'supabase_migrations'
+  if (relativePath.startsWith('.github/workflows/')) return 'github_workflow'
+  if (relativePath.startsWith('docs/')) return 'docs'
+  if (relativePath.startsWith('scripts/')) return 'scripts'
+  return 'root_or_other'
+}
+
+function detectFileKind(relativePath) {
+  const base = path.basename(relativePath)
+
+  if (relativePath.startsWith('src/app/api/') && /\/route\.(ts|tsx|js|jsx)$/.test(relativePath)) {
+    return 'route_handler'
+  }
+  if (/\/page\.(ts|tsx|js|jsx)$/.test(relativePath)) return 'page'
+  if (/\/layout\.(ts|tsx|js|jsx)$/.test(relativePath)) return 'layout'
+  if (base === 'middleware.ts' || base === 'middleware.js') return 'middleware'
+  if (relativePath.startsWith('src/server/services/')) return 'service'
+  if (relativePath.startsWith('src/server/repositories/')) return 'repository'
+  if (relativePath.startsWith('src/server/auth/')) return 'auth_module'
+  if (relativePath.startsWith('src/server/events/')) return 'event_module'
+  if (relativePath.startsWith('src/server/utils/')) return 'utility'
+  if (relativePath.startsWith('src/domains/')) return 'domain_file'
+  if (relativePath.startsWith('supabase/migrations/') && relativePath.endsWith('.sql')) return 'migration'
+  if (relativePath.startsWith('.github/workflows/')) return 'workflow'
+  if (base === 'package.json') return 'package_manifest'
+  if (base === 'tsconfig.json') return 'typescript_config'
+  if (base === '.nvmrc') return 'node_version_file'
+  if (base === 'README.md') return 'readme'
+  return 'file'
+}
+
+function detectRoute(relativePath) {
+  const normalized = toPosix(relativePath)
+
+  if (normalized.startsWith('src/app/api/') && /\/route\.(ts|tsx|js|jsx)$/.test(normalized)) {
+    const rest = normalized
+      .replace(/^src\/app\/api/, '')
+      .replace(/\/route\.(ts|tsx|js|jsx)$/, '')
+
+    return {
+      route_type: 'api',
+      route_path: `/api${rest || ''}`,
+    }
+  }
+
+  if (/^src\/app\/.*\/page\.(ts|tsx|js|jsx)$/.test(normalized)) {
+    const rest = normalized
+      .replace(/^src\/app/, '')
+      .replace(/\/page\.(ts|tsx|js|jsx)$/, '')
+
+    return {
+      route_type: 'page',
+      route_path: rest || '/',
+    }
+  }
+
+  if (/^src\/app\/page\.(ts|tsx|js|jsx)$/.test(normalized)) {
+    return {
+      route_type: 'page',
+      route_path: '/',
+    }
+  }
+
+  return null
+}
+
+function detectDomainPath(relativePath) {
+  const normalized = toPosix(relativePath)
+
+  if (!normalized.startsWith('src/domains/')) {
+    return null
+  }
+
+  const rest = normalized.replace(/^src\/domains\//, '')
+  const parts = rest.split('/')
+
+  if (parts.length <= 1) {
+    return parts[0] || null
+  }
+
+  return parts.slice(0, parts.length - 1).join('/')
+}
+
+function extractImports(text) {
+  const imports = new Set()
+  const patterns = [
+    /import\s+[\s\S]*?\s+from\s+['"]([^'"]+)['"]/g,
+    /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
+    /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
+  ]
+
+  for (const pattern of patterns) {
+    for (const match of text.matchAll(pattern)) {
+      imports.add(match[1])
+    }
+  }
+
+  return [...imports].sort()
+}
+
+function extractExports(text) {
+  const exports = new Set()
+
+  for (const match of text.matchAll(/export\s+(?:async\s+)?function\s+([A-Za-z0-9_]+)/g)) {
+    exports.add(match[1])
+  }
+
+  for (const match of text.matchAll(/export\s+const\s+([A-Za-z0-9_]+)/g)) {
+    exports.add(match[1])
+  }
+
+  for (const match of text.matchAll(/export\s+class\s+([A-Za-z0-9_]+)/g)) {
+    exports.add(match[1])
+  }
+
+  for (const match of text.matchAll(/export\s+type\s+([A-Za-z0-9_]+)/g)) {
+    exports.add(match[1])
+  }
+
+  for (const match of text.matchAll(/export\s+interface\s+([A-Za-z0-9_]+)/g)) {
+    exports.add(match[1])
+  }
+
+  if (/export\s+default\b/g.test(text)) {
+    exports.add('default')
+  }
+
+  return [...exports].sort()
+}
+
+function extractEnvRefs(text) {
+  const refs = new Set()
+
+  for (const match of text.matchAll(/process\.env\.([A-Z0-9_]+)/g)) {
+    refs.add(match[1])
+  }
+
+  return [...refs].sort()
+}
+
+function splitSqlTopLevel(input) {
+  const parts = []
+  let current = ''
+  let depth = 0
+  let inSingle = false
+  let inDouble = false
+
+  for (let i = 0; i < input.length; i += 1) {
+    const char = input[i]
+    const prev = input[i - 1]
+
+    if (char === "'" && prev !== '\\' && !inDouble) {
+      inSingle = !inSingle
+      current += char
+      continue
+    }
+
+    if (char === '"' && !inSingle) {
+      inDouble = !inDouble
+      current += char
+      continue
+    }
+
+    if (!inSingle && !inDouble) {
+      if (char === '(') depth += 1
+      if (char === ')') depth = Math.max(0, depth - 1)
+
+      if (char === ',' && depth === 0) {
+        const trimmed = current.trim()
+        if (trimmed) {
+          parts.push(trimmed)
+        }
+        current = ''
+        continue
+      }
+    }
+
+    current += char
+  }
+
+  const tail = current.trim()
+  if (tail) {
+    parts.push(tail)
+  }
+
+  return parts
+}
+
+function normalizeSqlName(rawName) {
+  const clean = rawName.replace(/"/g, '').trim()
+  const parts = clean.split('.').filter(Boolean)
+
+  if (parts.length === 1) {
+    return {
+      raw: rawName.trim(),
+      qualified_name: clean,
+      schema: null,
+      name: parts[0],
+    }
+  }
+
+  return {
+    raw: rawName.trim(),
+    qualified_name: clean,
+    schema: parts[0],
+    name: parts[1],
+  }
+}
+
+function parseColumnDefinition(definition) {
+  if (/^(constraint|primary key|foreign key|unique|check)\b/i.test(definition.trim())) {
+    return null
+  }
+
+  const match = definition.match(
+    /^"?(?<name>[A-Za-z_][A-Za-z0-9_]*)"?\s+(?<type>[A-Za-z0-9_.\s\[\]]+?)(?=\s+(?:not null|null|default|check|references|constraint|primary key|unique)\b|$)/i,
+  )
+
+  if (!match?.groups?.name || !match.groups.type) {
+    return null
+  }
+
+  const refMatch = definition.match(/\breferences\s+([A-Za-z0-9_."-]+)\s*\(([^)]+)\)/i)
+  const defaultMatch = definition.match(
+    /\bdefault\s+(.+?)(?=\s+(?:check|references|constraint|primary key|unique|not null|null)\b|$)/i,
+  )
+
+  return {
+    name: match.groups.name.trim(),
+    data_type: match.groups.type.trim().replace(/\s+/g, ' '),
+    nullable: !/\bnot null\b/i.test(definition),
+    has_default: Boolean(defaultMatch),
+    default_value: defaultMatch ? defaultMatch[1].trim() : null,
+    references: refMatch
+      ? {
+          ...normalizeSqlName(refMatch[1]),
+          column: refMatch[2].replace(/"/g, '').trim(),
+        }
+      : null,
+    literal_sql: definition.trim(),
+  }
+}
+
+function parseTables(sqlText, sourcePath) {
+  const tables = []
+  const regex = /create table(?:\s+if not exists)?\s+([A-Za-z0-9_."-]+)\s*\(([\s\S]*?)\)\s*;/gi
+
+  for (const match of sqlText.matchAll(regex)) {
+    const tableName = normalizeSqlName(match[1])
+    const body = match[2]
+    const definitions = splitSqlTopLevel(body)
+    const columns = []
+    const tableConstraints = []
+
+    for (const definition of definitions) {
+      const parsed = parseColumnDefinition(definition)
+
+      if (parsed) {
+        columns.push(parsed)
+      } else {
+        tableConstraints.push(definition.trim())
+      }
+    }
+
+    tables.push({
+      ...tableName,
+      columns,
+      table_constraints: tableConstraints,
+      source_path: sourcePath,
+      literal_sql_header: match[0].slice(0, 300),
+    })
+  }
+
+  return tables
+}
+
+function parseIndexes(sqlText, sourcePath) {
+  const indexes = []
+  const regex =
+    /create\s+(unique\s+)?index(?:\s+if not exists)?\s+([A-Za-z0-9_."-]+)\s+on\s+([A-Za-z0-9_."-]+)\s*\(([^)]+)\)/gi
+
+  for (const match of sqlText.matchAll(regex)) {
+    indexes.push({
+      name: match[2].replace(/"/g, '').trim(),
+      unique: Boolean(match[1]),
+      table: normalizeSqlName(match[3]),
+      columns_literal: match[4].trim(),
+      source_path: sourcePath,
+      literal_sql: match[0].trim(),
+    })
+  }
+
+  return indexes
+}
+
+function parseRlsEnabledTables(sqlText, sourcePath) {
+  const items = []
+  const regex = /alter table\s+([A-Za-z0-9_."-]+)\s+enable row level security/gi
+
+  for (const match of sqlText.matchAll(regex)) {
+    items.push({
+      table: normalizeSqlName(match[1]),
+      source_path: sourcePath,
+      literal_sql: match[0].trim(),
+    })
+  }
+
+  return items
+}
+
+function parsePolicies(sqlText, sourcePath) {
+  const policies = []
+  const statements = sqlText.match(/create policy[\s\S]*?;/gi) ?? []
+
+  for (const statement of statements) {
+    const nameMatch = statement.match(/create policy\s+"?([^"\n]+)"?/i)
+    const tableMatch = statement.match(/\bon\s+([A-Za-z0-9_."-]+)/i)
+    const commandMatch = statement.match(/\bfor\s+(select|insert|update|delete|all)\b/i)
+    const usingMatch = statement.match(/\busing\s*\(([\s\S]*?)\)(?=\s+with check|;)/i)
+    const withCheckMatch = statement.match(/\bwith check\s*\(([\s\S]*?)\)(?=;)/i)
+
+    policies.push({
+      name: nameMatch ? nameMatch[1].trim() : null,
+      table: tableMatch ? normalizeSqlName(tableMatch[1]) : null,
+      command: commandMatch ? commandMatch[1].toLowerCase() : null,
+      using_expression: usingMatch ? usingMatch[1].trim() : null,
+      with_check_expression: withCheckMatch ? withCheckMatch[1].trim() : null,
+      source_path: sourcePath,
+      literal_sql: statement.trim(),
+    })
+  }
+
+  return policies
+}
+
+function parseFunctions(sqlText, sourcePath) {
+  const functions = []
+  const statements =
+    sqlText.match(
+      /create or replace function[\s\S]*?(?:\$\$[\s\S]*?\$\$|language[\s\S]*?)\s*;/gi,
+    ) ?? []
+
+  for (const statement of statements) {
+    const headerMatch = statement.match(
+      /create or replace function\s+([A-Za-z0-9_."-]+)\s*\(([\s\S]*?)\)\s*returns\s+([A-Za-z0-9_.\s]+)/i,
+    )
+    const languageMatch = statement.match(/\blanguage\s+([A-Za-z0-9_]+)/i)
+    const securityInvoker = /\bsecurity invoker\b/i.test(statement)
+    const securityDefiner = /\bsecurity definer\b/i.test(statement)
+
+    functions.push({
+      name: headerMatch ? normalizeSqlName(headerMatch[1]) : null,
+      arguments_literal: headerMatch ? headerMatch[2].trim() : null,
+      returns_literal: headerMatch ? headerMatch[3].trim().replace(/\s+/g, ' ') : null,
+      language: languageMatch ? languageMatch[1].trim().toLowerCase() : null,
+      security: securityDefiner ? 'definer' : securityInvoker ? 'invoker' : null,
+      source_path: sourcePath,
+      literal_sql_header: statement.slice(0, 500).trim(),
+    })
+  }
+
+  return functions
+}
+
+function parseViews(sqlText, sourcePath) {
+  const views = []
+  const regex = /create(?: or replace)? view\s+([A-Za-z0-9_."-]+)\s+as/gi
+
+  for (const match of sqlText.matchAll(regex)) {
+    views.push({
+      name: normalizeSqlName(match[1]),
+      source_path: sourcePath,
+      literal_sql: match[0].trim(),
+    })
+  }
+
+  return views
+}
+
+function parseTriggers(sqlText, sourcePath) {
+  const triggers = []
+  const regex = /create trigger\s+([A-Za-z0-9_."-]+)[\s\S]*?\bon\s+([A-Za-z0-9_."-]+)/gi
+
+  for (const match of sqlText.matchAll(regex)) {
+    triggers.push({
+      name: match[1].replace(/"/g, '').trim(),
+      table: normalizeSqlName(match[2]),
+      source_path: sourcePath,
+      literal_sql: match[0].trim(),
+    })
+  }
+
+  return triggers
+}
+
+function parseEnums(sqlText, sourcePath) {
+  const enums = []
+  const regex = /create type\s+([A-Za-z0-9_."-]+)\s+as enum\s*\(([\s\S]*?)\)/gi
+
+  for (const match of sqlText.matchAll(regex)) {
+    const values = splitSqlTopLevel(match[2]).map((item) =>
+      item.trim().replace(/^'/, '').replace(/'$/, ''),
+    )
+
+    enums.push({
+      name: normalizeSqlName(match[1]),
+      values,
+      source_path: sourcePath,
+      literal_sql: match[0].trim(),
+    })
+  }
+
+  return enums
+}
+
+function parseSqlContracts(sqlText, sourcePath) {
+  return {
+    tables: parseTables(sqlText, sourcePath),
+    indexes: parseIndexes(sqlText, sourcePath),
+    policies: parsePolicies(sqlText, sourcePath),
+    functions: parseFunctions(sqlText, sourcePath),
+    views: parseViews(sqlText, sourcePath),
+    triggers: parseTriggers(sqlText, sourcePath),
+    enums: parseEnums(sqlText, sourcePath),
+    rls_enabled_tables: parseRlsEnabledTables(sqlText, sourcePath),
+  }
+}
+
+function makeDirNode(relativePath) {
+  return {
+    path: relativePath,
+    name: path.basename(relativePath),
+    node_type: 'directory',
+    depth: relativePath === '.' ? 0 : relativePath.split('/').length,
+    layer: detectLayer(relativePath),
+  }
+}
+
+function buildTree(nodes) {
+  const root = {
+    name: '.',
+    path: '.',
+    node_type: 'directory',
+    children: [],
+  }
+
+  const index = new Map()
+  index.set('.', root)
+
+  const sorted = [...nodes].sort((a, b) => a.path.localeCompare(b.path))
+
+  for (const node of sorted) {
+    if (node.path === '.') {
+      continue
+    }
+
+    const parentPath = node.path.includes('/')
+      ? node.path.slice(0, node.path.lastIndexOf('/'))
+      : '.'
+
+    const parent = index.get(parentPath)
+
+    if (!parent) {
+      continue
+    }
+
+    const slimNode = {
+      name: node.name,
+      path: node.path,
+      node_type: node.node_type,
+    }
+
+    if (node.node_type === 'file') {
+      slimNode.kind = node.kind
+      slimNode.layer = node.layer
+    } else {
+      slimNode.children = []
+    }
+
+    parent.children.push(slimNode)
+
+    if (node.node_type === 'directory') {
+      index.set(node.path, slimNode)
+    }
+  }
+
+  return root
+}
+
+async function readMaybeText(absPath, relativePath, size, warnings) {
+  if (!isTextLike(relativePath)) {
+    return null
+  }
+
+  if (size > MAX_TEXT_BYTES) {
+    warnings.push({
+      path: relativePath,
+      code: 'TEXT_ANALYSIS_SKIPPED_FILE_TOO_LARGE',
+      size_bytes: size,
+    })
+    return null
+  }
+
+  try {
+    return await fs.readFile(absPath, 'utf8')
+  } catch {
+    warnings.push({
+      path: relativePath,
+      code: 'TEXT_ANALYSIS_FAILED_TO_READ_UTF8',
+    })
+    return null
+  }
+}
+
+async function walk(relativeDir, directoryNodes, fileRecords, runtime, contracts, warnings) {
+  const absDir = path.join(ROOT, relativeDir)
+  const entries = await fs.readdir(absDir, { withFileTypes: true })
+  entries.sort((a, b) => a.name.localeCompare(b.name))
+
+  for (const entry of entries) {
+    if (IGNORED_FILES.has(entry.name)) {
+      continue
+    }
+
+    if (entry.isDirectory() && IGNORED_DIRS.has(entry.name)) {
+      continue
+    }
+
+    const relativePath = relativeDir ? toPosix(path.join(relativeDir, entry.name)) : entry.name
+
+    if (isOutputFile(relativePath)) {
+      continue
+    }
+
+    const absPath = path.join(ROOT, relativePath)
+
+    if (entry.isDirectory()) {
+      directoryNodes.push(makeDirNode(relativePath))
+      await walk(relativePath, directoryNodes, fileRecords, runtime, contracts, warnings)
+      continue
+    }
+
+    if (!entry.isFile()) {
+      continue
+    }
+
+    const stat = await fs.stat(absPath)
+    const buffer = await fs.readFile(absPath)
+    const ext = fileExtension(relativePath)
+    const layer = detectLayer(relativePath)
+    const kind = detectFileKind(relativePath)
+    const route = detectRoute(relativePath)
+    const domainPath = detectDomainPath(relativePath)
+    const text = await readMaybeText(absPath, relativePath, stat.size, warnings)
+
+    const record = {
+      path: relativePath,
+      name: path.basename(relativePath),
+      node_type: 'file',
+      extension: ext,
+      size_bytes: stat.size,
+      sha256: sha256(buffer),
+      layer,
+      kind,
+      domain_path: domainPath,
+      route,
+      env_refs: [],
+      imports: [],
+      exports: [],
+      source_status: 'confirmed_from_repo_file',
+    }
+
+    if (text !== null) {
+      record.env_refs = extractEnvRefs(text)
+      record.imports = extractImports(text)
+      record.exports = extractExports(text)
+
+      for (const envRef of record.env_refs) {
+        runtime.env_references.add(envRef)
+      }
+
+      if (relativePath.startsWith('.github/workflows/')) {
+        runtime.workflows.push(relativePath)
+      }
+
+      if (relativePath === 'package.json') {
+        try {
+          runtime.package_json = JSON.parse(text)
+        } catch {
+          warnings.push({
+            path: relativePath,
+            code: 'PACKAGE_JSON_PARSE_FAILED',
+          })
+        }
+      }
+
+      if (relativePath === 'tsconfig.json') {
+        try {
+          runtime.tsconfig_json = JSON.parse(text)
+        } catch {
+          warnings.push({
+            path: relativePath,
+            code: 'TSCONFIG_PARSE_FAILED',
+          })
+        }
+      }
+
+      if (relativePath === '.nvmrc') {
+        runtime.nvmrc = text.trim() || null
+      }
+
+      if (relativePath.startsWith('supabase/migrations/') && relativePath.endsWith('.sql')) {
+        const parsed = parseSqlContracts(text, relativePath)
+        contracts.tables.push(...parsed.tables)
+        contracts.indexes.push(...parsed.indexes)
+        contracts.policies.push(...parsed.policies)
+        contracts.functions.push(...parsed.functions)
+        contracts.views.push(...parsed.views)
+        contracts.triggers.push(...parsed.triggers)
+        contracts.enums.push(...parsed.enums)
+        contracts.rls_enabled_tables.push(...parsed.rls_enabled_tables)
+        contracts.sources.push(relativePath)
+      }
+    }
+
+    fileRecords.push(record)
+  }
+}
+
+function countBy(items, key) {
+  const map = new Map()
+
+  for (const item of items) {
+    const value = item[key] ?? 'null'
+    map.set(value, (map.get(value) ?? 0) + 1)
+  }
+
+  return Object.fromEntries([...map.entries()].sort((a, b) => a[0].localeCompare(b[0])))
+}
+
+async function writeJson(relativePath, payload) {
+  const absPath = path.join(ROOT, relativePath)
+  await fs.mkdir(path.dirname(absPath), { recursive: true })
+  await fs.writeFile(absPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8')
+}
+
+async function writeText(relativePath, content) {
+  const absPath = path.join(ROOT, relativePath)
+  await fs.mkdir(path.dirname(absPath), { recursive: true })
+  await fs.writeFile(absPath, content, 'utf8')
+}
+
+function buildIndexMarkdown(context) {
+  const {
+    metadata,
+    directoryNodes,
+    fileRecords,
+    contracts,
+    runtimeManifest,
+    filesManifest,
+  } = context
+
+  const routes = fileRecords
+    .filter((file) => file.route)
+    .map((file) => `- \`${file.route.route_path}\` — ${file.path}`)
+    .join('\n')
+
+  const workflows = runtimeManifest.runtime.workflows
+    .map((workflow) => `- \`${workflow}\``)
+    .join('\n')
+
+  return `# REPO REALITY INDEX
+
+Gerado automaticamente a partir da realidade do repositório.
+
+## Metadados
+
+- generated_at: \`${metadata.generated_at}\`
+- repository: \`${metadata.repository ?? 'unknown'}\`
+- branch: \`${metadata.branch ?? 'unknown'}\`
+- commit_sha: \`${metadata.commit_sha ?? 'unknown'}\`
+- generator: \`${metadata.generator}\`
+
+## Contagem estrutural
+
+- directories: ${directoryNodes.length}
+- files: ${fileRecords.length}
+
+## Contagem por camada
+
+${Object.entries(filesManifest.summary.files_by_layer)
+  .map(([key, value]) => `- ${key}: ${value}`)
+  .join('\n')}
+
+## Contagem por kind
+
+${Object.entries(filesManifest.summary.files_by_kind)
+  .map(([key, value]) => `- ${key}: ${value}`)
+  .join('\n')}
+
+## Contratos SQL detectados
+
+- tables: ${contracts.tables.length}
+- indexes: ${contracts.indexes.length}
+- policies: ${contracts.policies.length}
+- functions: ${contracts.functions.length}
+- views: ${contracts.views.length}
+- triggers: ${contracts.triggers.length}
+- enums: ${contracts.enums.length}
+- rls_enabled_tables: ${contracts.rls_enabled_tables.length}
+
+## Runtime detectado
+
+- env_references: ${runtimeManifest.runtime.env_references.length}
+- workflows: ${runtimeManifest.runtime.workflows.length}
+- nvmrc: ${runtimeManifest.runtime.nvmrc ?? 'null'}
+
+## Rotas detectadas
+
+${routes || '- nenhuma rota detectada'}
+
+## Workflows detectados
+
+${workflows || '- nenhum workflow detectado'}
+
+## Arquivos gerados
+
+- \`docs/repo/REPO_TREE.json\`
+- \`docs/repo/REPO_FILES.json\`
+- \`docs/repo/REPO_CONTRACTS.json\`
+- \`docs/repo/REPO_RUNTIME.json\`
+- \`docs/repo/REPO_INDEX.md\`
+
+## Observações
+
+- Tudo aqui é derivado apenas de arquivos reais do repositório.
+- Estado remoto do banco não é inferido a partir das migrations.
+- O que não estiver no repositório não entra como fato.
+`
+}
+
+async function main() {
+  const metadata = {
+    generated_at: nowIso(),
+    repository: process.env.GITHUB_REPOSITORY ?? null,
+    branch: process.env.GITHUB_REF_NAME ?? null,
+    commit_sha: process.env.GITHUB_SHA ?? null,
+    generator: 'scripts/generate-repo-manifest.mjs@1',
+    root: ROOT,
+  }
+
+  const directoryNodes = [makeDirNode('.')]
+  const fileRecords = []
+  const warnings = []
+
+  const runtime = {
+    package_json: null,
+    tsconfig_json: null,
+    nvmrc: null,
+    workflows: [],
+    env_references: new Set(),
+  }
+
+  const contracts = {
+    sources: [],
+    tables: [],
+    indexes: [],
+    policies: [],
+    functions: [],
+    views: [],
+    triggers: [],
+    enums: [],
+    rls_enabled_tables: [],
+  }
+
+  await walk('', directoryNodes, fileRecords, runtime, contracts, warnings)
+
+  const runtimeManifest = {
+    metadata,
+    runtime: {
+      package_json: runtime.package_json,
+      tsconfig_json: runtime.tsconfig_json,
+      nvmrc: runtime.nvmrc,
+      workflows: [...new Set(runtime.workflows)].sort(),
+      env_references: [...runtime.env_references].sort(),
+    },
+    warnings,
+  }
+
+  const filesManifest = {
+    metadata,
+    directories: directoryNodes.sort((a, b) => a.path.localeCompare(b.path)),
+    files: fileRecords.sort((a, b) => a.path.localeCompare(b.path)),
+    summary: {
+      total_directories: directoryNodes.length,
+      total_files: fileRecords.length,
+      files_by_layer: countBy(fileRecords, 'layer'),
+      files_by_kind: countBy(fileRecords, 'kind'),
+    },
+    warnings,
+  }
+
+  const contractsManifest = {
+    metadata,
+    contracts: {
+      sql_sources: [...new Set(contracts.sources)].sort(),
+      tables: contracts.tables,
+      indexes: contracts.indexes,
+      policies: contracts.policies,
+      functions: contracts.functions,
+      views: contracts.views,
+      triggers: contracts.triggers,
+      enums: contracts.enums,
+      rls_enabled_tables: contracts.rls_enabled_tables,
+    },
+    warnings,
+  }
+
+  const treeNodes = [
+    ...filesManifest.directories.map((dir) => ({
+      path: dir.path,
+      name: dir.name,
+      node_type: 'directory',
+      layer: dir.layer,
+    })),
+    ...filesManifest.files.map((file) => ({
+      path: file.path,
+      name: file.name,
+      node_type: 'file',
+      kind: file.kind,
+      layer: file.layer,
+    })),
+  ]
+
+  const treeManifest = {
+    metadata,
+    tree: buildTree(treeNodes),
+    warnings,
+  }
+
+  const indexMarkdown = buildIndexMarkdown({
+    metadata,
+    directoryNodes: filesManifest.directories,
+    fileRecords: filesManifest.files,
+    contracts: contractsManifest.contracts,
+    runtimeManifest,
+    filesManifest,
+  })
+
+  await writeJson(`${OUTPUT_DIR}/REPO_TREE.json`, treeManifest)
+  await writeJson(`${OUTPUT_DIR}/REPO_FILES.json`, filesManifest)
+  await writeJson(`${OUTPUT_DIR}/REPO_CONTRACTS.json`, contractsManifest)
+  await writeJson(`${OUTPUT_DIR}/REPO_RUNTIME.json`, runtimeManifest)
+  await writeText(`${OUTPUT_DIR}/REPO_INDEX.md`, indexMarkdown)
+
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        output_dir: OUTPUT_DIR,
+        files_generated: OUTPUT_FILES,
+        total_directories: filesManifest.summary.total_directories,
+        total_files: filesManifest.summary.total_files,
+      },
+      null,
+      2,
+    ),
+  )
+}
+
+main().catch((error) => {
+  console.error(
+    JSON.stringify(
+      {
+        ok: false,
+        error: error instanceof Error ? error.message : 'UNKNOWN_ERROR',
+      },
+      null,
+      2,
+    ),
+  )
+  process.exit(1)
+})
