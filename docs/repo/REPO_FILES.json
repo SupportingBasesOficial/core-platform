@@ -1,0 +1,1445 @@
+{
+  "metadata": {
+    "generated_at": "2026-04-09T17:32:32.924Z",
+    "repository": "SupportingBasesOficial/core-platform",
+    "branch": "main",
+    "commit_sha": "e84db7b074e4a4bb438fb66cde7865d07cef280f",
+    "generator": "scripts/generate-repo-manifest.mjs@1",
+    "root": "/home/runner/work/core-platform/core-platform"
+  },
+  "directories": [
+    {
+      "path": ".",
+      "name": ".",
+      "node_type": "directory",
+      "depth": 0,
+      "layer": "root_or_other"
+    },
+    {
+      "path": ".github",
+      "name": ".github",
+      "node_type": "directory",
+      "depth": 1,
+      "layer": "root_or_other"
+    },
+    {
+      "path": ".github/workflows",
+      "name": "workflows",
+      "node_type": "directory",
+      "depth": 2,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "docs",
+      "name": "docs",
+      "node_type": "directory",
+      "depth": 1,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "public",
+      "name": "public",
+      "node_type": "directory",
+      "depth": 1,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "scripts",
+      "name": "scripts",
+      "node_type": "directory",
+      "depth": 1,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "src",
+      "name": "src",
+      "node_type": "directory",
+      "depth": 1,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "src/app",
+      "name": "app",
+      "node_type": "directory",
+      "depth": 2,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "src/app/api",
+      "name": "api",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/api/_utils",
+      "name": "_utils",
+      "node_type": "directory",
+      "depth": 4,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/api/events",
+      "name": "events",
+      "node_type": "directory",
+      "depth": 4,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/api/events/create-failing",
+      "name": "create-failing",
+      "node_type": "directory",
+      "depth": 5,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/api/events/process",
+      "name": "process",
+      "node_type": "directory",
+      "depth": 5,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/api/sales",
+      "name": "sales",
+      "node_type": "directory",
+      "depth": 4,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/login",
+      "name": "login",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/logout",
+      "name": "logout",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/test-auth",
+      "name": "test-auth",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/test-dead-events",
+      "name": "test-dead-events",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/test-events",
+      "name": "test-events",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/test-sale",
+      "name": "test-sale",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/app/test-tenant",
+      "name": "test-tenant",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "app"
+    },
+    {
+      "path": "src/modules",
+      "name": "modules",
+      "node_type": "directory",
+      "depth": 2,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "src/modules/vendas",
+      "name": "vendas",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "src/server",
+      "name": "server",
+      "node_type": "directory",
+      "depth": 2,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "src/server/audit",
+      "name": "audit",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/auth",
+      "name": "auth",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/db",
+      "name": "db",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/errors",
+      "name": "errors",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/events",
+      "name": "events",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/permissions",
+      "name": "permissions",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/repositories",
+      "name": "repositories",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/services",
+      "name": "services",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/server/utils",
+      "name": "utils",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "server"
+    },
+    {
+      "path": "src/shared",
+      "name": "shared",
+      "node_type": "directory",
+      "depth": 2,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "src/shared/types",
+      "name": "types",
+      "node_type": "directory",
+      "depth": 3,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "supabase",
+      "name": "supabase",
+      "node_type": "directory",
+      "depth": 1,
+      "layer": "root_or_other"
+    },
+    {
+      "path": "supabase/migrations",
+      "name": "migrations",
+      "node_type": "directory",
+      "depth": 2,
+      "layer": "root_or_other"
+    }
+  ],
+  "files": [
+    {
+      "path": ".eslintrc.json",
+      "name": ".eslintrc.json",
+      "node_type": "file",
+      "extension": ".json",
+      "size_bytes": 40,
+      "sha256": "1589a15e55fbebc6519c95d91d8f0a090618f20dc78e479858b9c27552484961",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": ".github/workflows/generate-repo-manifest.yml",
+      "name": "generate-repo-manifest.yml",
+      "node_type": "file",
+      "extension": ".yml",
+      "size_bytes": 1020,
+      "sha256": "570cab31ec6ddf0c2497cff2442523f3edb7a84be12545d06f99dfd5d056f243",
+      "layer": "github_workflow",
+      "kind": "workflow",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": ".gitignore",
+      "name": ".gitignore",
+      "node_type": "file",
+      "extension": ".gitignore",
+      "size_bytes": 391,
+      "sha256": "f37e7e1b90353a16ba7bec8979585311ee6d00311209391e5ab47162df4ca922",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": ".nvmrc",
+      "name": ".nvmrc",
+      "node_type": "file",
+      "extension": ".nvmrc",
+      "size_bytes": 8,
+      "sha256": "f2917caabf6ef6fa0927a589ade3a75d837b548f4b827050ad54491830b23a8c",
+      "layer": "root_or_other",
+      "kind": "node_version_file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "docs/CORE_OVERVIEW.md",
+      "name": "CORE_OVERVIEW.md",
+      "node_type": "file",
+      "extension": ".md",
+      "size_bytes": 2376,
+      "sha256": "dad1d27b635c956c09d3785f4d9a490bcac6a6e5a655312dca6adece22bb0dd0",
+      "layer": "docs",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "docs/MODULE_PATTERN.md",
+      "name": "MODULE_PATTERN.md",
+      "node_type": "file",
+      "extension": ".md",
+      "size_bytes": 3437,
+      "sha256": "d9de0f254ad25884d26b00977610019e70d27756d2d7dd574d0bca6a8742265c",
+      "layer": "docs",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "docs/SETUP.md",
+      "name": "SETUP.md",
+      "node_type": "file",
+      "extension": ".md",
+      "size_bytes": 3425,
+      "sha256": "bece59ab938f593bb0110c4646f64784c1365b9ebeae89553aa62fd4393a411b",
+      "layer": "docs",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "next.config.mjs",
+      "name": "next.config.mjs",
+      "node_type": "file",
+      "extension": ".mjs",
+      "size_bytes": 92,
+      "sha256": "1e3206cb200e264fdddb4dbb2e4772daebc839fdbc94b78316d74892a0de6fa2",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "next"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "package-lock.json",
+      "name": "package-lock.json",
+      "node_type": "file",
+      "extension": ".json",
+      "size_bytes": 213159,
+      "sha256": "7f69bd53f75488891fe26bcaefa130eab2aa75b60eb8924c36968dbf0c21eb7a",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "package.json",
+      "name": "package.json",
+      "node_type": "file",
+      "extension": ".json",
+      "size_bytes": 617,
+      "sha256": "82dffc86696143ff5dff895934504bba254cc81ac3ba8d6a023df9927adebf8c",
+      "layer": "root_or_other",
+      "kind": "package_manifest",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "name": "postcss.config.mjs",
+      "node_type": "file",
+      "extension": ".mjs",
+      "size_bytes": 135,
+      "sha256": "ac31e2a95ef64fe27ceb4124e101675273107aae2e33bc490b01d919e7f03646",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "postcss-load-config"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "public/next.svg",
+      "name": "next.svg",
+      "node_type": "file",
+      "extension": ".svg",
+      "size_bytes": 1375,
+      "sha256": "55995dfad6ecb4945a1e856ddca03c5e16aa5bf13fd21b4df6a74ae79357bcfc",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "public/vercel.svg",
+      "name": "vercel.svg",
+      "node_type": "file",
+      "extension": ".svg",
+      "size_bytes": 629,
+      "sha256": "3fa5cd757b418e18afc68ddebad55f443206e410327921ddb2bf1be731658880",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "README.md",
+      "name": "README.md",
+      "node_type": "file",
+      "extension": ".md",
+      "size_bytes": 1383,
+      "sha256": "11994b30b08107f737b64953aa4b479368ec65db88adb6688708fcaa44bd3fdc",
+      "layer": "root_or_other",
+      "kind": "readme",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "scripts/generate-repo-manifest.mjs",
+      "name": "generate-repo-manifest.mjs",
+      "node_type": "file",
+      "extension": ".mjs",
+      "size_bytes": 25563,
+      "sha256": "3e63ee7e8933396da7acfb343f17a750b3439dfe6a527b18226104720509ffb8",
+      "layer": "scripts",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [
+        "GITHUB_REF_NAME",
+        "GITHUB_REPOSITORY",
+        "GITHUB_SHA"
+      ],
+      "imports": [
+        "node:crypto",
+        "node:fs",
+        "node:path"
+      ],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/api/_utils/applyRequestMetric.ts",
+      "name": "applyRequestMetric.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 272,
+      "sha256": "0cd2f178dbd1b2580d121185a6c906f974fd35c1d3eb37102f6b464f9ff8d81a",
+      "layer": "app",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "@/server/utils/logger"
+      ],
+      "exports": [
+        "applyRequestMetric"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/api/_utils/handleError.ts",
+      "name": "handleError.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 239,
+      "sha256": "904ed7abda03a68c6f9cb87bdd6bed0d255cf4112fafc9a240c6bf6a2c993c91",
+      "layer": "app",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [
+        "handleError"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/api/events/create-failing/route.ts",
+      "name": "route.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 1047,
+      "sha256": "47ac23bc0b3edad230d161724aaf62cdbb9cad969f4f75698c84846e35ef78c3",
+      "layer": "app",
+      "kind": "route_handler",
+      "domain_path": null,
+      "route": {
+        "route_type": "api",
+        "route_path": "/api/events/create-failing"
+      },
+      "env_refs": [],
+      "imports": [
+        "../../_utils/handleError",
+        "@/server/auth/getCurrentOrg",
+        "@/server/auth/getUser",
+        "@/server/db/supabaseServer"
+      ],
+      "exports": [
+        "POST"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/api/events/process/route.ts",
+      "name": "route.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 320,
+      "sha256": "23b24762f2bcdf25591d995fc181537ed490a8cf5f4f888cf39a491b884cb74c",
+      "layer": "app",
+      "kind": "route_handler",
+      "domain_path": null,
+      "route": {
+        "route_type": "api",
+        "route_path": "/api/events/process"
+      },
+      "env_refs": [],
+      "imports": [
+        "../../_utils/handleError",
+        "@/server/events/worker"
+      ],
+      "exports": [
+        "POST"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/api/sales/route.ts",
+      "name": "route.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 1402,
+      "sha256": "23e8463a5478ffcedca3e2e060339a069d7d383267b2f4f6762fc424b5ade143",
+      "layer": "app",
+      "kind": "route_handler",
+      "domain_path": null,
+      "route": {
+        "route_type": "api",
+        "route_path": "/api/sales"
+      },
+      "env_refs": [],
+      "imports": [
+        "../_utils/applyRequestMetric",
+        "../_utils/handleError",
+        "@/modules/vendas/schema",
+        "@/server/services/salesService",
+        "@/server/utils/logger",
+        "crypto"
+      ],
+      "exports": [
+        "POST"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/favicon.ico",
+      "name": "favicon.ico",
+      "node_type": "file",
+      "extension": ".ico",
+      "size_bytes": 25931,
+      "sha256": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932",
+      "layer": "app",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/globals.css",
+      "name": "globals.css",
+      "node_type": "file",
+      "extension": ".css",
+      "size_bytes": 606,
+      "sha256": "a001ecc92f6103e499433a5f6fd6d8c380ebb80ebcdaea1b8f75a7c3155b37e6",
+      "layer": "app",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "name": "layout.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 473,
+      "sha256": "c01af76b3fff0fc2a0485a8e593f5a5f93fb4c070bb202269bf6cfaead43673d",
+      "layer": "app",
+      "kind": "layout",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "next",
+        "next/font/google"
+      ],
+      "exports": [
+        "default",
+        "metadata"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/login/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 2151,
+      "sha256": "6e3b1b2de435368efd6e799cda86b55c8b1807a71f6f005c5785dadf5cf6872a",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/login"
+      },
+      "env_refs": [],
+      "imports": [
+        "@/server/db/supabaseBrowser",
+        "react"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/logout/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 482,
+      "sha256": "2205f975a437fe4cd904e515ca947c87326149d757f142ac9a094ba104f6301c",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/logout"
+      },
+      "env_refs": [],
+      "imports": [
+        "@/server/db/supabaseBrowser",
+        "react"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 5820,
+      "sha256": "4383c0031c2020b38a6058e3dc8d519d3d74c099ba4bd7142d6a1f688a0de07e",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/"
+      },
+      "env_refs": [],
+      "imports": [
+        "next/image"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/test-auth/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 578,
+      "sha256": "86a5fe28844ecf0fad00e6d2f13492a9d149fe3165297cd914305fc666048884",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/test-auth"
+      },
+      "env_refs": [],
+      "imports": [
+        "@/server/auth/getUser"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/test-dead-events/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 1579,
+      "sha256": "ff0268fcef17fd53a0b0a1b6670a601209d771a23b392024223814143ff48529",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/test-dead-events"
+      },
+      "env_refs": [],
+      "imports": [
+        "react"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/test-events/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 1022,
+      "sha256": "975b6f99c0de62606f7d0f95e8b385cbb3407882f8d1a49c252b198629e5e558",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/test-events"
+      },
+      "env_refs": [],
+      "imports": [
+        "react"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/test-sale/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 2102,
+      "sha256": "70e8f1627cc9b4ee8a6e327b18b2f791353ffd05d3b5d9a902095a13da9e1b0a",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/test-sale"
+      },
+      "env_refs": [],
+      "imports": [
+        "react"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/app/test-tenant/page.tsx",
+      "name": "page.tsx",
+      "node_type": "file",
+      "extension": ".tsx",
+      "size_bytes": 965,
+      "sha256": "84e5f11192a449bb60da0dbc6e6bdb3291bd97e9d78a794612d1ad4bec9a50b7",
+      "layer": "app",
+      "kind": "page",
+      "domain_path": null,
+      "route": {
+        "route_type": "page",
+        "route_path": "/test-tenant"
+      },
+      "env_refs": [],
+      "imports": [
+        "@/server/auth/getCurrentOrg",
+        "@/server/auth/getUser"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/middleware.ts",
+      "name": "middleware.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 1416,
+      "sha256": "fea2d53ebc9e715778441abe1cc0cdf1cc2984f58266386b2280047b0d859b9b",
+      "layer": "app",
+      "kind": "middleware",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL"
+      ],
+      "imports": [
+        "@supabase/ssr",
+        "next/server"
+      ],
+      "exports": [
+        "config",
+        "middleware"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/modules/vendas/schema.ts",
+      "name": "schema.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 178,
+      "sha256": "b99700e3d41ac79efc81a769b576953eee6bb839a41afcebf8fffe595f5b16bc",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "zod"
+      ],
+      "exports": [
+        "createSaleSchema"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/audit/auditLog.ts",
+      "name": "auditLog.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 414,
+      "sha256": "48467e60d57187741e19e4c2892bbb84065e1fc8aa7b6a50ca1386d816421dd5",
+      "layer": "server",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../db/supabaseServer"
+      ],
+      "exports": [
+        "auditLog"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/auth/getCurrentOrg.ts",
+      "name": "getCurrentOrg.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 385,
+      "sha256": "1ba89fbf036f3ee17165dda4e284c2f308bc55511eb3b9a1ab506e07fb830e9f",
+      "layer": "server",
+      "kind": "auth_module",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../db/supabaseServer"
+      ],
+      "exports": [
+        "getCurrentOrg"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/auth/getUser.ts",
+      "name": "getUser.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 218,
+      "sha256": "df70d69ec3efb4e540bae7f8ef8ddcba733c008b5d6c5e5545028b934b9a0129",
+      "layer": "server",
+      "kind": "auth_module",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../db/supabaseServer"
+      ],
+      "exports": [
+        "getUser"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/db/supabaseBrowser.ts",
+      "name": "supabaseBrowser.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 226,
+      "sha256": "fd075da62deecd64ed351851b70d23a75ae463ad32d9ea4bb0492df80a514a8d",
+      "layer": "server",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL"
+      ],
+      "imports": [
+        "@supabase/ssr"
+      ],
+      "exports": [
+        "createSupabaseBrowserClient"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/db/supabaseServer.ts",
+      "name": "supabaseServer.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 442,
+      "sha256": "8669f85326b642eed92167430acb7a68e34762bd84490dd899e5fdd78b1eb762",
+      "layer": "server",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL"
+      ],
+      "imports": [
+        "@supabase/ssr",
+        "next/headers"
+      ],
+      "exports": [
+        "createSupabaseServerClient"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/errors/AppError.ts",
+      "name": "AppError.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 213,
+      "sha256": "4a00868ff53478ae00616cf99a413dd9a602e6b59c000802c0882a6243b2e988",
+      "layer": "server",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [
+        "AppError"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/events/eventBus.ts",
+      "name": "eventBus.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 457,
+      "sha256": "8d7e0feb59f33029ff4552ecfa02122a1646d10f7a453d7f856a195d282a0982",
+      "layer": "server",
+      "kind": "event_module",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../db/supabaseServer"
+      ],
+      "exports": [
+        "emitEvent"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/events/worker.ts",
+      "name": "worker.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 3650,
+      "sha256": "4bcf7a0becbf518a9d09aaa776f069d24dc215927e6add531d0331148ec7768e",
+      "layer": "server",
+      "kind": "event_module",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../db/supabaseServer",
+        "../utils/logger",
+        "crypto"
+      ],
+      "exports": [
+        "processEvents"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/permissions/checkPermission.ts",
+      "name": "checkPermission.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 414,
+      "sha256": "1b8d140e84e75dc1bbbd1df3c970361fc82d90066304d2b4f1d663adcc062a61",
+      "layer": "server",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../db/supabaseServer"
+      ],
+      "exports": [
+        "checkPermission"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/repositories/salesRepository.ts",
+      "name": "salesRepository.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 367,
+      "sha256": "572e3a9e98d1791f77cdb334fed5c0ba02118f499235b81a02d65728c9f6c0ce",
+      "layer": "server",
+      "kind": "repository",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../db/supabaseServer"
+      ],
+      "exports": [
+        "insertSale"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/services/salesService.ts",
+      "name": "salesService.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 2321,
+      "sha256": "ca256449b3fb339cdaa31165b985b981f97e56408bd5b250736a703045fb8eed",
+      "layer": "server",
+      "kind": "service",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "../audit/auditLog",
+        "../auth/getCurrentOrg",
+        "../auth/getUser",
+        "../db/supabaseServer",
+        "../errors/AppError",
+        "../permissions/checkPermission",
+        "../utils/logger",
+        "@/shared/types/context"
+      ],
+      "exports": [
+        "createSale"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/server/utils/logger.ts",
+      "name": "logger.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 328,
+      "sha256": "e0f6deacfbe991f2496a55fe17fd3e20021e4231ed5bbb23ef3fea1671d7817c",
+      "layer": "server",
+      "kind": "utility",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [
+        "log"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "src/shared/types/context.ts",
+      "name": "context.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 70,
+      "sha256": "a353f6d87569f595ecef98960706708e8bf85a2d04af5e747e2ad335c4d274d1",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [
+        "RequestContext"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/.gitignore",
+      "name": ".gitignore",
+      "node_type": "file",
+      "extension": ".gitignore",
+      "size_bytes": 72,
+      "sha256": "507699eb91144818edf61d3a079212cacf31d8db520eae428e3b48fcf0d6919c",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/config.toml",
+      "name": "config.toml",
+      "node_type": "file",
+      "extension": ".toml",
+      "size_bytes": 14653,
+      "sha256": "6c4efd95251d7498188722df2954b87097d28c834e60097616a150cd820916e0",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/0001_core_platform_base.sql",
+      "name": "0001_core_platform_base.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 3664,
+      "sha256": "0c876a37f631e094b7df489b317944bb7d88779c5019c0f9aa9c03dff1efbeca",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/0002_sales_transaction_rpc.sql",
+      "name": "0002_sales_transaction_rpc.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 806,
+      "sha256": "699a4f8744bca776e0f9a83bad8895c7163eb62f9af19ed72267d30940112cb2",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/20260401230904_sales_idempotency.sql",
+      "name": "20260401230904_sales_idempotency.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 173,
+      "sha256": "23e59969c6677611799ebca94b3b950998ea5654a16088b33ed7f93cd4ab0505",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/20260401231854_sales_transaction_rpc_idempotent.sql",
+      "name": "20260401231854_sales_transaction_rpc_idempotent.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 1332,
+      "sha256": "de2607a1f6b7b1b8c20314ab68cc1ccea854622ae9da6d89c947702df24ad824",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/20260402003108_events_worker_retry_base.sql",
+      "name": "20260402003108_events_worker_retry_base.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 291,
+      "sha256": "ad1bd5c57583ccf12f52256c696a7c06b9902d279d36d51336cfe99f65e3f267",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/20260402003302_lock_events_function.sql",
+      "name": "20260402003302_lock_events_function.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 413,
+      "sha256": "a29b6bf6a74c86b38e6445eee2d79ba235433890749aefa06403cb05256cddc2",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/20260402004957_events_update_policy.sql",
+      "name": "20260402004957_events_update_policy.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 356,
+      "sha256": "734bc0bbb62e49b5109ed55c780429d37f2a62df502781e1a3a18fce98575129",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/20260402010354_dead_events_table.sql",
+      "name": "20260402010354_dead_events_table.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 71,
+      "sha256": "9e0d0b8887bc8bd91e43e52d5684283b7271399ce9634dd2f05b30ba24252d9b",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "supabase/migrations/20260402010527_dead_events_policies.sql",
+      "name": "20260402010527_dead_events_policies.sql",
+      "node_type": "file",
+      "extension": ".sql",
+      "size_bytes": 567,
+      "sha256": "76556d08700c98b86a6608c074abbad90ac6361b0357083d0bb831d72465d8a0",
+      "layer": "supabase_migrations",
+      "kind": "migration",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "name": "tailwind.config.ts",
+      "node_type": "file",
+      "extension": ".ts",
+      "size_bytes": 510,
+      "sha256": "31e0c50ed0967c36d6f87104e309f6bdd210d0301f7f9e012d42ac77655f0c6a",
+      "layer": "root_or_other",
+      "kind": "file",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [
+        "tailwindcss"
+      ],
+      "exports": [
+        "default"
+      ],
+      "source_status": "confirmed_from_repo_file"
+    },
+    {
+      "path": "tsconfig.json",
+      "name": "tsconfig.json",
+      "node_type": "file",
+      "extension": ".json",
+      "size_bytes": 578,
+      "sha256": "53f96418e60724de8c624de8d7d1b549f64a6c34a5f40f07a7596af4380c92f6",
+      "layer": "root_or_other",
+      "kind": "typescript_config",
+      "domain_path": null,
+      "route": null,
+      "env_refs": [],
+      "imports": [],
+      "exports": [],
+      "source_status": "confirmed_from_repo_file"
+    }
+  ],
+  "summary": {
+    "total_directories": 37,
+    "total_files": 59,
+    "files_by_layer": {
+      "app": 17,
+      "docs": 3,
+      "github_workflow": 1,
+      "root_or_other": 16,
+      "scripts": 1,
+      "server": 12,
+      "supabase_migrations": 9
+    },
+    "files_by_kind": {
+      "auth_module": 2,
+      "event_module": 2,
+      "file": 25,
+      "layout": 1,
+      "middleware": 1,
+      "migration": 9,
+      "node_version_file": 1,
+      "package_manifest": 1,
+      "page": 8,
+      "readme": 1,
+      "repository": 1,
+      "route_handler": 3,
+      "service": 1,
+      "typescript_config": 1,
+      "utility": 1,
+      "workflow": 1
+    }
+  },
+  "warnings": []
+}

@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "generated_at": "2026-04-09T17:32:32.924Z",
+    "repository": "SupportingBasesOficial/core-platform",
+    "branch": "main",
+    "commit_sha": "e84db7b074e4a4bb438fb66cde7865d07cef280f",
+    "generator": "scripts/generate-repo-manifest.mjs@1",
+    "root": "/home/runner/work/core-platform/core-platform"
+  },
+  "runtime": {
+    "package_json": {
+      "name": "core-platform",
+      "version": "0.1.0",
+      "private": true,
+      "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+      },
+      "dependencies": {
+        "@supabase/ssr": "^0.10.0",
+        "@supabase/supabase-js": "^2.101.1",
+        "next": "14.2.3",
+        "react": "^18",
+        "react-dom": "^18",
+        "zod": "^4.3.6"
+      },
+      "devDependencies": {
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "eslint": "^8",
+        "eslint-config-next": "14.2.3",
+        "postcss": "^8",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5"
+      }
+    },
+    "tsconfig_json": {
+      "compilerOptions": {
+        "lib": [
+          "dom",
+          "dom.iterable",
+          "esnext"
+        ],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true,
+        "plugins": [
+          {
+            "name": "next"
+          }
+        ],
+        "paths": {
+          "@/*": [
+            "./src/*"
+          ]
+        }
+      },
+      "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts"
+      ],
+      "exclude": [
+        "node_modules"
+      ]
+    },
+    "nvmrc": "18.20.4",
+    "workflows": [
+      ".github/workflows/generate-repo-manifest.yml"
+    ],
+    "env_references": [
+      "GITHUB_REF_NAME",
+      "GITHUB_REPOSITORY",
+      "GITHUB_SHA",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_URL"
+    ]
+  },
+  "warnings": []
+}
