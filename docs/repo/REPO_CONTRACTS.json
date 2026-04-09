@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "generated_at": "2026-04-09T17:58:12.599Z",
+    "generated_at": "2026-04-09T19:24:58.811Z",
     "repository": "SupportingBasesOficial/core-platform",
     "branch": "main",
-    "commit_sha": "5db18c6d510faef1b955e8ae884a3f683b665854",
-    "generator": "scripts/generate-repo-manifest.mjs@2",
+    "commit_sha": "2717a8fd090739ab742d8c0e5d916622436a6a21",
+    "generator": "scripts/generate-repo-manifest-v3.mjs@3",
     "root": "/home/runner/work/core-platform/core-platform"
   },
   "contracts": {
@@ -34,6 +34,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
@@ -46,6 +48,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "name text not null"
@@ -58,6 +62,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "now()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
@@ -82,6 +88,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": {
               "raw": "auth.users",
               "qualified_name": "auth.users",
@@ -100,6 +108,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "email text"
@@ -112,6 +122,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "full_name text"
@@ -124,6 +136,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "now()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
@@ -148,6 +162,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
@@ -160,6 +176,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": {
               "raw": "profiles",
               "qualified_name": "profiles",
@@ -178,6 +196,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": {
               "raw": "organizations",
               "qualified_name": "organizations",
@@ -196,6 +216,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "role text not null"
@@ -208,6 +230,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "now()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
@@ -232,6 +256,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
@@ -244,6 +270,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "role text not null"
@@ -256,6 +284,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "permission text not null"
@@ -268,6 +298,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "now()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
@@ -292,6 +324,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
@@ -304,6 +338,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": {
               "raw": "organizations",
               "qualified_name": "organizations",
@@ -322,6 +358,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "total numeric not null"
@@ -334,6 +372,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "now()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
@@ -358,6 +398,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
@@ -370,6 +412,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "type text not null"
@@ -382,6 +426,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "payload jsonb"
@@ -394,6 +440,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": {
               "raw": "organizations",
               "qualified_name": "organizations",
@@ -412,6 +460,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "'pending'",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "status text not null default 'pending'"
@@ -424,6 +474,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "0",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "attempts integer not null default 0"
@@ -436,6 +488,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "now()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
@@ -460,6 +514,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "gen_random_uuid()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "id uuid primary key default gen_random_uuid()"
@@ -472,6 +528,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": {
               "raw": "profiles",
               "qualified_name": "profiles",
@@ -490,6 +548,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "action text not null"
@@ -502,6 +562,8 @@
             "unique": false,
             "has_default": false,
             "default_value": null,
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "metadata jsonb"
@@ -514,6 +576,8 @@
             "unique": false,
             "has_default": true,
             "default_value": "now()",
+            "generated_always": false,
+            "generated_expression": null,
             "references": null,
             "check_expression": null,
             "literal_sql": "created_at timestamptz not null default now()"
